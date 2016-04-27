@@ -1,0 +1,49 @@
+<!-- 
+    contenuto del modale statistiche citazioni ricevute 
+    dento al div <div class="ngdialog-content">
+
+    ngDialog: libreria di AngulaJS
+
+    Quando viene aperto l'ng- dialog gli viene passato:
+    data: {
+        articleData: $scope.articleData,
+        citDonutChartId: "donut_chart",
+        citStackedChartId: "stackedColumn_chart"
+    }
+-->
+
+<h2 class="text-center">{{ngDialogData.articleData.title}}</h2>
+<h3 class="text-center">Overview on incoming citations</h3>
+
+<div class="row">
+
+    <div class="col-lg-6">
+        <!-- START panel-->
+        <div id="donutPanel" class="panel panel-default">
+            <div class="panel-heading"><h4>Citation functions</h4></div>
+            <div class="panel-body">
+                <div id="donut_chart" align="center" class="chart-panel-lg">
+                    
+                    <!-- grafico donut -->
+
+                </div>
+            </div>
+        </div>
+        <!-- END panel-->
+    </div>
+    <div class="col-lg-6">
+        <!-- START panel-->
+        <div id="stackedPanel" class="panel panel-default">
+            <div class="panel-heading"><h4>Citation functions yearly</h4></div>
+            <div class="panel-body">
+                <div id="stacked_chart" align="center" class="chart-panel-lg">
+                    
+                    <!-- grafico a barre  -->
+
+                </div>
+            </div>
+        </div>
+        <!-- END panel-->
+    </div>
+
+</div>

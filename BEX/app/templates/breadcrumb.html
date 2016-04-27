@@ -1,0 +1,15 @@
+<div class="breadcrumb-div">
+    <ul class="breadcrumb-custom" ng-show="states.length > 0">
+
+        <li ng-repeat="state in states" >
+            <a href="#" ng-click="changeState($index, $last)">
+                <span class="breadcrumb-icon fa fa-file-text-o" ng-if="state.params.searchType === types.abstractSearch"></span>
+                <!--<span class="breadcrumb-icon fa fa-file-text" ng-if="state.params.searchType === types.singleArticle"></span>-->
+                <span class="breadcrumb-icon fa fa-file-text" ng-if="state.params.searchType === types.singleArticleDoi"></span>
+                <span class="breadcrumb-icon icon icon-user" ng-if="state.params.searchType === types.authorSearch"></span>
+                <span class="breadcrumb-icon title-icon" ng-if="state.params.searchType === types.titleSearch">T</span>
+                 {{state.details.length>30?state.details.substring(0,30)+" ..." : state.details}}
+            </a>
+        </li>
+    </ul>
+</div>

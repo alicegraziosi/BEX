@@ -1,0 +1,55 @@
+<div ng-controller="ArticlesOrderbyController as ArticlesOrderbyCtrl">
+    <h3 class="text-center text-thin"><em class="fa fa-sort-alpha-asc"></em> Order by </h3>
+    <div class="p" >
+        <select name="articlesOrderBy" ng-change="ArticlesOrderbyCtrl.applyOrderBy()" ng-model="ArticlesOrderbyCtrl.orderByV" class="form-control">
+            <option ng-selected="option == ArticlesOrderbyCtrl.orderByV" value="{{option}}" ng-repeat="option in ArticlesOrderbyCtrl.orderOptions">{{ArticlesOrderbyCtrl.toOptionName(option)}}</option>
+        </select>
+    </div>
+    <div class="p row-centered">
+        <div class="btn-group col col-centered">
+            <label class="btn btn-primary" ng-model="ArticlesOrderbyCtrl.sortV"  btn-radio="false"  ng-change="ArticlesOrderbyCtrl.applySort()" ><em class="fa fa-sort-amount-asc fa-lg"></em> asc</label>
+            <label class="btn btn-primary" ng-model="ArticlesOrderbyCtrl.sortV"  btn-radio="true" ng-change="ArticlesOrderbyCtrl.applySort()" ><em class="fa fa-sort-amount-desc fa-lg"></em> desc</label>
+        </div>
+    </div>
+</div>
+
+<div ng-controller="ArticlesFiltersController as articlesFiltersCtrl">
+    <h3 class="text-center text-thin filters-header"><em class="fa fa-filter"></em> Filters</h3>
+    <div class="p" >
+        <div>
+            <legend class="filter-legend">
+                <span ng-class="{'filter-enabled-heading': articlesFiltersCtrl.checkType}"><em tooltip="Enabling this filter, you can visualize only the articles of the selected types" tooltip-placement="top" tooltip-popup-delay="500" class="fa fa-info-circle"></em> Articles types </span>
+                <label class="switch pull-right">
+                    <input type="checkbox"  ng-model="articlesFiltersCtrl.checkType" ng-change="articlesFiltersCtrl.switchTypeFilter()" />
+                    <span></span>
+                </label>
+            </legend>
+            <div collapse="!articlesFiltersCtrl.checkType">
+                <div class="checkbox c-checkbox needsclick" ng-repeat="articleType in articlesFiltersCtrl.articleTypes">
+                    <label class="needsclick">
+                        <input type="checkbox" ng-checked="articlesFiltersCtrl.isInSelectedTypes(articleType)" ng-click="articlesFiltersCtrl.switchType(articleType)" value="" class="needsclick" />
+                        <span class="fa fa-check"></span>{{articleType=="Article"?"Other":articleType}}s</label>
+                </div>
+            </div>
+        </div>
+        <div>
+            <legend class="filter-legend">
+                <span ng-class="{'filter-enabled-heading': articlesFiltersCtrl.checkYear}"><em tooltip="Enabling this filter, you can visualize only the articles with the publication year greater than or equal to the one inserted" tooltip-placement="right" tooltip-popup-delay="500" class="fa fa-info-circle"></em> After year </span>
+                <label class="switch pull-right">
+                    <input type="checkbox"  ng-model="articlesFiltersCtrl.checkYear" ng-change="articlesFiltersCtrl.switchYearFilter()" />
+                    <span></span>
+                </label>
+            </legend>
+            <div collapse="!articlesFiltersCtrl.checkYear">
+                <div class="input-group" >
+                    <input placeholder="Year to start from" class="form-control" ng-disabled="!articlesFiltersCtrl.checkYear" type="number" ng-model="articlesFiltersCtrl.publicationYearV" min="1950" max="{{articlesFiltersCtrl.year}}">
+                 <span class="input-group-btn">
+                    <button ng-disabled="!articlesFiltersCtrl.checkYear" type="button" class="btn btn-default" ng-click="articlesFiltersCtrl.applyYearFilter()">Set</button>
+                 </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+

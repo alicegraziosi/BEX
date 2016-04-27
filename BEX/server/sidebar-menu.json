@@ -1,0 +1,58 @@
+[
+  {
+    "text": "Main Navigation",
+    "heading": "true",
+    "translate": "sidebar.heading.HEADER",
+    "bottom": false
+  },
+  {
+    "text": "Search",
+    "sref": "app.home-search",
+    "icon": "icon-magnifier",
+    "bottom": false
+  },
+  {
+    "text": "Articles",
+    "sref": "app.articles-results",
+    "icon": "icon-book-open",
+    "alert": "ArticlesLength",
+    "bottom": false
+  },
+  {
+    "text": "Bookmarks",
+    "sref": "app.bookmarks",
+    "icon": "fa fa-bookmark",
+    "alert": "BookmarksLength",
+    "bottom": false
+  },
+  {
+    "text": "Authors",
+    "sref": "app.authors",
+    "icon": "icon-user",
+    "alert": "AuthorsLength",
+    "bottom": false
+  },
+  {
+    "text": "Comparisons",
+    "sref": "app.comparisons",
+    "icon": "icon-user",
+    "bottom": false
+  },
+  {
+    "text": "Other",
+    "heading": "true",
+    "bottom": false
+  },
+  {
+    "text": "Settings",
+    "sref": "app.settings",
+    "icon": "fa fa-cog",
+    "bottom": true
+  },
+  {
+    "text": "About",
+    "sref": "app.about",
+    "icon": "fa fa-info-circle",
+    "bottom": true
+  }
+]

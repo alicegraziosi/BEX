@@ -1,0 +1,191 @@
+<div class="animated fadeInDown">
+    <div class="header-div" tabindex="0" ui-keypress="{76:'AuthorResultsCtrl.logStates()'}">
+        <breadcrumb></breadcrumb>
+    </div>
+
+    <div class="header-div articles-info-header" >
+        <h3 class="text-center">Aggregate data about the author</h3>
+    </div>
+
+    <!--
+    <div class="header-div articles-info-header" >
+        <h4 class="num-articles-shown-info" ng-show="AuthorResultsCtrl.getTotalGlobalCitations() > 1">
+            <span class="highlighted-txt">{{AuthorResultsCtrl.getTotalGlobalCitations()}}</span> Total Global Citations received in
+            <span class="highlighted-txt">{{AuthorResultsCtrl.articles.length}}</span> article<span ng-show="AuthorResultsCtrl.articles.length != 1">s</span> (in the dataset)
+        </h4>
+    </div>
+
+    <div ng-show="AuthorResultsCtrl.articles.length > 1" class="header-div articles-info-header" >
+        <h4 class="no-margin num-articles-shown-info">
+            <span class="highlighted-txt">{{AuthorResultsCtrl.articles.length}}</span> article<span ng-show="AuthorResultsCtrl.articles.length != 1">s</span> (in the dataset)
+        </h4>
+    </div>
+
+    <div class="header-div articles-info-header" >
+        <h3 class="text-center">Overview on incoming citations</h3>
+    </div>-->
+
+    <div class="header-div articles-info-header" >
+        <div  tooltip="Show details"  tooltip-popup-delay="500" align="center" class="show-article-info"
+            ng-click="toggleAuthorDetails()">
+            <i ng-class="{'fa fa-chevron-down fa-2x': authorDetailsIsCollapsed, 'fa fa-chevron-up fa-2x': !authorDetailsIsCollapsed}"></i>
+        </div>
+    </div>
+
+    <!-- pannello collapsed-->
+    <div class="panel-body" collapse="authorDetailsIsCollapsed">
+        <div class="row">
+
+
+            <div class="col-lg-12">
+                <div class="panel panel-default" ng-init="isCollapsed = false">
+                    <div class="panel-heading">
+                        <span class="collapse-heading">Citation received</span>
+                    </div>
+                    <div class="panel-body" collapse="isCollapsed">
+
+
+                      <tabset justified="true">
+
+                          <tab>
+                            <tab-heading>
+                                <em class=""></em><em class="fa fa-arrow-right"></em> Cited by
+                            </tab-heading>
+                            <div align="center">
+                              <div class="row text-center p-lg mb-xl cit-metrics-bar">
+                                  <div class="row row-table">
+                                      <div ng-class="{'col-xs-4': AuthorResultsCtrl.getTotalCitations() > 0, 'col-xs-6': AuthorResultsCtrl.getTotalCitations() == 0}" class="br">
+                                          <em class="fa fa-quote-left fa-2x"></em>
+                                          <h4 class="m0"> Cited {{AuthorResultsCtrl.getTotalCitations()}} times</h4>
+                                      </div>
+                                      <div ng-class="{'col-xs-4': AuthorResultsCtrl.getTotalCitations() > 0, 'col-xs-6': AuthorResultsCtrl.getTotalCitations() == 0}" class="br">
+                                          <em class="icon-globe fa-2x"></em>
+                                          <h4 class="m0">{{AuthorResultsCtrl.getTotalGlobalCitations()}} Total Global Citations</h4>
+                                      </div>
+                                      <div ng-if="AuthorResultsCtrl.getTotalCitations() > 0" class="col-xs-4">
+                                          <em tooltip="Overview on incoming citations (in the dataset)" tooltip-placement="top" ng-show="AuthorResultsCtrl.getTotalCitations() > 0" ng-click="showCitDetails()" class="fa icon-bar-chart fa-4x pointer metrics-bar-charts"></em>
+                                      </div>
+                                  </div>
+                              </div>
+                            </div>
+                          </tab>
+
+                          <tab>
+                              <tab-heading>
+                                <em class=""></em><em class=""></em> Author comparison
+                              </tab-heading>
+                              <div align="center">
+
+                                <h4>Compare with an author</h4>
+                                <div class="row text-center">
+                                    <div class="form-group col-centered col-lg-6 col-md-6 col-sm-10">
+                                        <ui-select
+                                            class="input-lg"
+                                            ng-model="AuthorResultsCtrl.searchAuthor"
+                                            theme="bootstrap"
+                                            reset-search-input="false"
+                                            ng-init="$select.search = ' '"> 
+                                        <ui-select-match placeholder="Type author name">{{$select.selected.n + " " +  $select.selected.s}}</ui-select-match>
+                                            <ui-select-choices
+                                                repeat="author in AuthorResultsCtrl.authors | filter: $select.search" 
+                                                refresh="AuthorResultsCtrl.refreshAuthors($select.search)"
+                                                refresh-delay="0">
+                                                <span ng-bind-html="author.fullName | highlight: $select.search"></span>
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                </div>
+                                <!-- END panel-->
+                                <div class="text-center">
+                                    <!--<button ng-show="AuthorResultsCtrl.compareWith"
+                                            id="search-btn" type="button" class="mb-sm btn btn-primary btn-lg"
+                                            ng-click="showComparisonDetails()">Compare with <span ng-bind="AuthorResultsCtrl.compareWith"></span></button>-->
+
+                                    <button id="search-btn" type="button" class="mb-sm btn btn-primary btn-lg"
+                                            ng-click="showComparisonDetails()">Compare with Ian Horrocks</button>
+                                </div>
+                              </div>
+                          </tab>
+
+                        </tabset>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <div ng-show="AuthorResultsCtrl.articles.length > 1" class="header-div articles-info-header" >
+        <h4 class="no-margin num-articles-shown-info">
+            <span ng-show="filteredArticles.length < AuthorResultsCtrl.articles.length">
+                <span class="highlighted-txt">{{filteredArticles.length}}</span>of
+            </span>
+            <span class="highlighted-txt">{{AuthorResultsCtrl.articles.length}}</span>
+            article<span ng-show="AuthorResultsCtrl.articles.length != 1">s</span>
+            <span ng-show="filteredArticles.length < AuthorResultsCtrl.articles.length"> are shown</span>
+        </h4>
+        <h4 class="no-margin articles-order-by-info">
+            ordered by <span class="highlighted-txt">{{AuthorResultsCtrl.toOptionName(AuthorResultsCtrl.articlesOrderByFil.value)}} </span>
+        </h4>
+        <h4 ng-show="AuthorResultsCtrl.activatedFiltersBool.value" class="no-margin articles-filter-info">
+            filtered by <span class="highlighted-txt" ng-repeat="fil in AuthorResultsCtrl.activatedFilters" >{{fil == "afterYear"?"year":fil}}{{!$last?",":""}}</span>
+        </h4>
+    </div>
+</div>
+
+
+
+<!-- articoli -->
+
+<div tabindex="0" ui-keypress="{76:'AuthorResultsCtrl.logResults()'}">
+
+    <div class="row well well-sm" align="center" ng-show="AuthorResultsCtrl.articlesNum.value != AuthorResultsCtrl.completedArticles.value">
+        <h4>Loading articles info ({{AuthorResultsCtrl.articlesNum.value}} results) <em class="fa fa-spinner fa-spin"></em></h4>
+        <progressbar max=100 value=AuthorResultsCtrl.completedPercent.value>
+            <span class="text-nowrap">{{AuthorResultsCtrl.completedArticles.value}} / {{AuthorResultsCtrl.articlesNum.value}}</span>
+        </progressbar>
+    </div>
+
+    <!-- paginazione -->
+    <div class="row">
+        <div class="text-center">
+            <!-- pager -->
+            <ul ng-if="AuthorResultsCtrl.pager.pages.length" class="pagination">
+                <li ng-class="{disabled:AuthorResultsCtrl.pager.currentPage === 1}">   
+                    <a ng-click="AuthorResultsCtrl.setPage(1)">First</a>
+                </li>
+                <li ng-class="{disabled:AuthorResultsCtrl.pager.currentPage === 1}">
+                    <a ng-click="AuthorResultsCtrl.setPage(AuthorResultsCtrl.pager.currentPage - 1)">Previous</a>
+                </li>
+                <li ng-repeat="page in AuthorResultsCtrl.pager.pages" ng-class="{active:AuthorResultsCtrl.pager.currentPage === page}">
+                    <a ng-click="AuthorResultsCtrl.setPage(page)">{{page}}</a>
+                </li>               
+                <li ng-class="{disabled:AuthorResultsCtrlpager.currentPage === AuthorResultsCtrl.pager.totalPages}">
+                    <a ng-click="AuthorResultsCtrl.setPage(AuthorResultsCtrl.pager.currentPage + 1)">Next</a>
+                </li>
+                <li ng-class="{disabled:AuthorResultsCtrl.pager.currentPage === AuthorResultsCtrl.pager.totalPages}">
+                    <a ng-click="AuthorResultsCtrl.setPage(AuthorResultsCtrl.pager.totalPages)">Last</a>
+                </li>
+            </ul>
+        </div>
+         <article-item class="article-item" ng-repeat="article in filteredArticles = (AuthorResultsCtrl.items |
+            articleType:AuthorResultsCtrl.selectedArticleTypes |
+            afterYear:AuthorResultsCtrl.articlesPublicationYearFil.value |
+            orderBy:AuthorResultsCtrl.articlesOrderByFil.value:AuthorResultsCtrl.articlesSortByFil.value)"
+            article-data="article"
+            article-index="{{$index + 1}}"
+            year-filter=AuthorResultsCtrl.publicationYearFil
+            order-filter=AuthorResultsCtrl.orderByFil
+            sort-filter=AuthorResultsCtrl.sortFil
+            selfcitation-filter=AuthorResultsCtrl.selfcitationsFil
+            characterizations-filter=AuthorResultsCtrl.characterizationsFil
+            authors-filter="AuthorResultsCtrl.authorsFil"
+            check-bookmark = "{value: true}"
+             <!--show-details="{value: true}">
+        </article-item>
+    </div>
+    
+</div>
+

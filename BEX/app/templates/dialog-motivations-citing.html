@@ -1,0 +1,25 @@
+<div class="modal-header">
+    <h4 class="modal-title">{{ngDialogData.title}}</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12" ng-repeat="motivation in ngDialogData.motivations" ng-init="motivationId = generateId($index)">
+            <!-- START panel-->
+            <div id="{{motivationId}}" class="panel panel-default">
+                <div class="panel-heading">
+                    {{motivation.colorStr}} ({{motivation.inTextRefPointers.length}})
+                    <paneltool tool-collapse="tool-collapse"></paneltool>
+                </div>
+                <div collapse="{{motivationId}}" class="panel-wrapper">
+                    <div class="panel-body">
+                        <ul>
+                            <li ng-repeat="irp in motivation.inTextRefPointers" ng-bind-html="empInTxtRefPointer(irp.sentenceTxt, irp.irpTxt)"></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- END panel-->
+        </div>
+    </div>
+
+</div>

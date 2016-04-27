@@ -1,0 +1,56 @@
+<h3 class="animated fadeInDownBig">Welcome in <span class="text-bold">BEX</span> - a Web App to search and browse the contents of <a href="http://www.semanticlancet.eu/" target="_blank">Semantic Lancet </a>Triplestore</h3>
+<div class="row" align="center">
+    <div align="center" id="panelSearch" class="panel panel-default col-centered col-lg-8 col-md-10 col-sm-12">
+        <div class="panel-body text-center">
+            <h1>Author comparison</h1>
+        </div>
+        <!-- START panel-->
+        <div class="panel-body">
+            <tabset justified="true">
+                <tab>
+                    <div class="row text-center">
+                        <div class="form-group col-centered col-lg-6 col-md-6 col-sm-10">
+                            <ui-select
+                                    class="input-lg"
+                                    ng-model="ComparisonsCtrl.authorUno"
+                                    theme="bootstrap"
+                                    reset-search-input="false"
+                                    ng-init="$select.search = ' '"> 
+                                <ui-select-match placeholder="Type author name">{{$select.selected.n + " " +  $select.selected.s}}</ui-select-match>
+                                <ui-select-choices
+                                    repeat="author in ComparisonsCtrl.authors | filter: $select.search" 
+                                    refresh="ComparisonsCtrl.refreshAuthors($select.search)"
+                                    refresh-delay="0">
+                                    <span ng-bind-html="author.fullName | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="form-group col-centered col-lg-6 col-md-6 col-sm-10">
+                            <ui-select
+                                    class="input-lg"
+                                    ng-model="ComparisonsCtrl.authorDue"
+                                    theme="bootstrap"
+                                    reset-search-input="false"
+                                    ng-init="$select.search = ' '"> 
+                                <ui-select-match placeholder="Type author name">{{$select.selected.n + " " +  $select.selected.s}}</ui-select-match>
+                                <ui-select-choices
+                                    repeat="author in ComparisonsCtrl.authors | filter: $select.search" 
+                                    refresh="ComparisonsCtrl.refreshAuthors($select.search)"
+                                    refresh-delay="0">
+                                    <span ng-bind-html="author.fullName | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                </tab>
+            </tabset>
+        </div>
+
+        <!-- grafici -->
+        <!-- gdhVisualization directive-->
+        <dh-visualization
+        	author-uno=ComparisonsCtrl.authorUno 
+        	author-due=ComparisonsCtrl.authorDue>
+        </dh-visualization>

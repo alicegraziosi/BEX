@@ -1,0 +1,20 @@
+<h3 class="animated fadeInDownBig">Bookmarks<span class="label label-purple" style="vertical-align: middle; font-size: 0.6em; margin-left: 10px">BETA</span></h3>
+
+<div class="row"  align="center" ng-show="BookmarksCtrl.bookmarks.length > 0">
+    <div class="well well-sm col-lg-5 col-md-8 col-centered" style="text-align:center">
+        <button type="button" class="btn btn-labeled btn-warning" ng-click="BookmarksCtrl.removeAllBookmarks()">
+            <span class="btn-label"><i class="fa fa-warning"></i></span>Remove all bookmarks
+        </button>
+        <button type="button" class="btn btn-labeled btn-green" ng-click="BookmarksCtrl.getBookmarksLink()">
+            <span class="btn-label"><i class="icon-link"></i></span>Generate List Link
+        </button>
+    </div>
+</div>
+<span ng-show="BookmarksCtrl.bookmarks.length == 0" id="no-bookmarks">No bookmarks</span>
+<div class="row">
+    <article-item class="article-item" ng-repeat="bookmark in BookmarksCtrl.bookmarks"
+                  article-data="bookmark"
+                  article-index="{{$index + 1}}"
+                  check-bookmark = "{value: false}">
+    </article-item>
+</div>

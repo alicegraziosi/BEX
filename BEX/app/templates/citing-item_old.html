@@ -1,0 +1,62 @@
+<div class="panel widget citing-item-panel">
+    <div class="citing-item-year" align="center" ng-class="{'citing-item-selfcitation': itemData.isSelfcitation }">
+        <div tooltip="Self-citation" tooltip-placement="bottom" ng-show="itemData.isSelfcitation" class="self-cit-badge pull-left"> S </div>
+        <span class="large-text">{{itemData.title.value}} - {{itemData.publicationYear}} </span>
+        <a ng-href="{{ itemData.htmlItem.value}}" target="_blank"><i class="fa fa-external-link link-white pull-right"></i></a>
+    </div>
+    <div class="citing-info-body" ng-init="showAbstract = false">
+        <div class="row">
+            <em class="fa fa-users biblio-round-icon fa-2x"></em>
+            <span tooltip="show author articles" class="label label-author-light pointer" ng-class="{'shared-author': isSharedAuthor(author) }" ng-repeat="author in itemData.authors" ng-click="exploreAuthor(author.givenName.value, author.familyName.value)">
+            {{author.givenName.value}} {{author.familyName.value}}
+            </span>
+        </div>
+        <div class="row" ng-show="itemData.motivations.length > 0">
+            <em class="icon-tag biblio-round-icon fa-2x"></em>
+            <span class="x-large-text text-bold">Motivations for citation</span>
+            <div class="col-lg-10 col-md-10 col-sm-10 motivations-div">
+
+                <div ng-repeat="motivation in itemData.motivations" ng-init="motivationId = generateId($index)">
+                    <!-- START panel-->
+                    <div id="{{motivationId}}" class="panel panel-default">
+                        <div class="panel-heading">
+                            {{motivation.colorStr}} ({{motivation.inTextRefPointers.length}})
+                            <paneltool tool-collapse="tool-collapse"></paneltool>
+                        </div>
+                        <div collapse="{{motivationId}}" class="panel-wrapper">
+                            <div class="panel-body">
+                                <ul>
+                                    <li ng-repeat="irp in motivation.inTextRefPointers" ng-bind-html="emphasizeInTxtRefPointer(irp.sentenceTxt, irp.irpTxt)"></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END panel-->
+                </div>
+            </div>
+        </div>
+
+        <!-- START panel-->
+        <div class="row" ng-init="isCollapsed = true">
+            <em class="fa fa-file-o  biblio-round-icon fa-2x"></em>
+            <span class="x-large-text text-bold">Abstract</span>
+            <em class="collapse-btn abs-collapse" ng-class="{'fa fa-plus-square-o fa-2x': isCollapsed, 'fa fa-minus-square-o fa-2x': !isCollapsed}" ng-click="isCollapsed = !isCollapsed"></em>
+
+            <div class="row" align="center"  collapse="isCollapsed">
+                <div class="col-lg-8 col-md-10 col-sm-12 col-centered">
+                    <div class="well well-sm">
+                        <p>{{itemData.abstractTxt.value}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END panel-->
+
+    </div>
+    <div class="panel-footer bg-gray-lighter bt0 clearfix btn-block citing-item-footer" align="center">
+        <button ng-click="exploreCitingItem()" type="button" class="btn btn-labeled btn-article"><span class="large-text">Go to article</span>
+               <span class="btn-label btn-label-right"><i class="fa fa-arrow-circle-o-right fa-2x"></i>
+               </span>
+        </button>
+    </div>
+</div>

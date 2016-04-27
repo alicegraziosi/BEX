@@ -1,0 +1,1 @@
+myApp.controller("AboutController",["$rootScope", function($rootScope) {}]);

@@ -1,0 +1,27 @@
+<!-- START Off Sidebar (right)-->
+<nav >
+   <tabset justified="true" class="filters-container">
+      <tab class="offsidebar-tab-heading">
+         <tab-heading >
+            Articles
+         </tab-heading>
+         <div ng-include="'app/views/appViews/articles-offsidebar.html'"></div>
+      </tab>
+      <tab class="offsidebar-tab-heading">
+         <tab-heading>
+            Citations
+         </tab-heading>
+         <div ng-include="'app/views/appViews/citations-offsidebar.html'"></div>
+      </tab>
+   </tabset>
+      <!--<span><em tooltip="" tooltip-placement="top" tooltip-popup-delay="500" class="fa fa-info-circle"></em> Year </span>-->
+   <div ng-controller="OffsidebarController as OffsidebarCtrl" id="offsidebar-overlap">
+      <span>Overlapping sidebar</span>
+      <label class="switch pull-right">
+         <input type="checkbox"  ng-model="OffsidebarCtrl.overlap" ng-change="OffsidebarCtrl.switchOffsidebarOverlap()" />
+         <span></span>
+      </label>
+   </div>
+
+</nav>
+<!-- END Off Sidebar (right)-->

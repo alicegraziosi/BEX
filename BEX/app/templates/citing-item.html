@@ -1,0 +1,54 @@
+<!-- START widget-->
+<div  ng-attr-id="{{::citingId}}" class="panel widget panel-biblio-item" ng-class="{'biblio-item-selfcitation': itemData.isSelfcitation }">
+    <div tooltip="Self-citation" tooltip-placement="bottom" ng-show="itemData.isSelfcitation" class="self-cit row"> S </div>
+    <div class="cit-index row">{{citingIndex}}</div>
+    <div class="row row-table row-flush biblio-item-row">
+        <div class="col-lg-11 col-md-11 col-sm-10 col-xs-10">
+            <div class="panel-body no-top-padding no-bottom-padding row ">
+                <div class="col-lg-12 col-md-12 col-sm-12 biblio-info-body">
+                    <div class="row">
+                        <div class=" biblio-title-index circle-header-sm">T</div>
+                        <h4 class="mt0 biblio-title">{{::itemData.title}}</h4>
+                    </div>
+
+                    <div class="row">
+                        <div class="circle-header-sm">
+                            <em tooltip="Publication Year"  tooltip-popup-delay="500" class="icon-calendar"></em>
+                        </div>
+
+                        <span class="article-year">{{::itemData.publicationYear}}</span>
+                    </div>
+
+                    <div class="row ">
+                        <div class="circle-header-sm">
+                            <em tooltip="Authors"  tooltip-popup-delay="500" class="fa fa-users"></em>
+                        </div>
+
+                        <span tooltip="show author articles" class="label label-author-light pointer " ng-class="{'shared-author': isSharedAuthor(author) }" ng-repeat="author in itemData.authors" ng-click="exploreAuthor(author.givenName.value, author.familyName.value)">
+                            {{::author.givenName.value}} {{::author.familyName.value}}
+                        </span>
+                    </div>
+                    <div class="row">
+                        <div class="circle-header-sm">
+                            <em class="icon-globe"></em>
+                        </div>
+
+                        <span class="large-text "><span class="highlighted-txt">{{::itemData.globalCitations}}</span> Global Citations  (updated: {{::itemData.globalCountDate.value}})</span>
+                    </div>
+                    <div align="center">
+                        <button tooltip="Read abstract"   class="btn btn-oval btn-default btn-lg btn-biblio large-text " ng-click="openAbstractDialog()"><em class="fa fa-file-o"></em></button>
+                        <button ng-show="itemData.motivations.length > 0" tooltip="motivations for citations" class="btn btn-biblio btn-oval btn-default btn-lg btn-biblio large-text" ng-click="openMotivationsDialog()"><em class="icon-tag"></em></button>
+                        <button tooltip="Get article link"   class="btn btn-oval btn-default btn-lg btn-biblio large-text " ng-click="getArticleLink()"><em class="icon-link"></em></button>
+                        <a tooltip="External link"  class="btn btn-oval btn-default btn-lg btn-biblio large-text" ng-href="{{::itemData.htmlItem.value}}" target="_blank"><i class="fa fa-external-link"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2 text-center biblio-item-more-info">
+            <em tooltip="Go to Article" class="fa fa-arrow-circle-right fa-4x pointer explore-biblio" ng-click="exploreCitingItem()"></em>
+        </div>
+    </div>
+</div>
+<!-- END widget-->

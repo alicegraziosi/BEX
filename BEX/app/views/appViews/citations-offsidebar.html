@@ -1,0 +1,112 @@
+<div ng-controller="CitationsOrderbyController as CitationsOrderbyCtrl">
+    <h3 class="text-center text-thin"><em class="fa fa-sort-alpha-asc"></em> Order by </h3>
+    <div class="p" >
+        <select name="articlesOrderBy" ng-change="CitationsOrderbyCtrl.applyOrderBy()" ng-model="CitationsOrderbyCtrl.orderByV" class="form-control">
+            <option ng-selected="option == CitationsOrderbyCtrl.orderByV" value="{{option}}" ng-repeat="option in CitationsOrderbyCtrl.orderOptions">{{CitationsOrderbyCtrl.toOptionName(option)}}</option>
+        </select>
+    </div>
+    <div class="p row-centered">
+        <div class="btn-group col col-centered">
+            <label class="btn btn-primary" ng-model="CitationsOrderbyCtrl.sortV"  btn-radio="false"  ng-change="CitationsOrderbyCtrl.applySort()" ><em class="fa fa-sort-amount-asc fa-lg"></em> asc</label>
+            <label class="btn btn-primary" ng-model="CitationsOrderbyCtrl.sortV"  btn-radio="true" ng-change="CitationsOrderbyCtrl.applySort()" ><em class="fa fa-sort-amount-desc fa-lg"></em> desc</label>
+        </div>
+    </div>
+</div>
+
+<div ng-controller="CitationsFiltersController as citationsFiltersCtrl">
+    <h3 class="text-center text-thin filters-header"><em class="fa fa-filter"></em> Filters</h3>
+    <div class="p" >
+        <div>
+            <legend class="filter-legend">
+                <span ng-class="{'filter-enabled-heading': citationsFiltersCtrl.checkYear}"><em tooltip="Enabling this filter, you can visualize only the cited articles with the publication year greater than or equal to the one inserted" tooltip-placement="right" tooltip-popup-delay="500" class="fa fa-info-circle"></em> After year </span>
+                <label class="switch pull-right">
+                    <input type="checkbox"  ng-model="citationsFiltersCtrl.checkYear" ng-change="citationsFiltersCtrl.switchYearFilter()" />
+                    <span></span>
+                </label>
+            </legend>
+            <div collapse="!citationsFiltersCtrl.checkYear">
+                <div class="input-group" >
+                    <input placeholder="Year to start from" class="form-control" ng-disabled="!citationsFiltersCtrl.checkYear" type="number" ng-model="citationsFiltersCtrl.publicationYearV" min="1950" max="{{citationsFiltersCtrl.year}}">
+                 <span class="input-group-btn">
+                    <button ng-disabled="!citationsFiltersCtrl.checkYear" type="button" class="btn btn-default" ng-click="citationsFiltersCtrl.applyYearFilter()">Set</button>
+                 </span>
+                </div>
+            </div>
+
+        </div>
+        <div>
+            <legend class="filter-legend">
+                <span ng-class="{'filter-enabled-heading': citationsFiltersCtrl.checkSelfcitations}"><em tooltip="Enabling this filter, only the self-citations will be displayed" tooltip-placement="right" tooltip-popup-delay="500" class="fa fa-info-circle"></em> Self-citations </span>
+                <label class="switch pull-right">
+                    <input type="checkbox"  ng-model="citationsFiltersCtrl.checkSelfcitations" ng-change="citationsFiltersCtrl.switchSelfcitations()"/>
+                    <span></span>
+                </label>
+            </legend>
+            <div collapse="!citationsFiltersCtrl.checkSelfcitations">
+                <div class="radio c-radio c-radio-nofont">
+                    <label>
+                        <input ng-click="citationsFiltersCtrl.switchExcludeSelfcitations(true)" type="radio" name="selfCitRadio" ng-checked="citationsFiltersCtrl.checkExcludeSelfCitations(true)"/>
+                        <span></span>Exclude Self-citations
+                    </label>
+                </div>
+                <div class="radio c-radio c-radio-nofont">
+                    <label>
+                        <input ng-click="citationsFiltersCtrl.switchExcludeSelfcitations(false)" type="radio" name="selfCitRadio"  ng-checked="citationsFiltersCtrl.checkExcludeSelfCitations(false)"/>
+                        <span></span>Isolate Self-citations
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div>
+            <legend class="filter-legend">
+                <span ng-class="{'filter-enabled-heading': citationsFiltersCtrl.checkAuthors}"><em tooltip="enabling this filter, you can see only the cited articles written by the selected authors" tooltip-placement="right" tooltip-popup-delay="500" class="fa fa-info-circle"></em> Authors </span>
+                <label class="switch pull-right">
+                    <input type="checkbox"  ng-model="citationsFiltersCtrl.checkAuthors" ng-change="citationsFiltersCtrl.switchAuthors()"/>
+                    <span></span>
+                </label>
+            </legend>
+            <div collapse="!citationsFiltersCtrl.checkAuthors">
+                <div class="input-group">
+                    <input ng-class="{'input-error': citationsFiltersCtrl.inputNotValid, 'input-warning': citationsFiltersCtrl.authorAlreadyInList}" placeholder="Type author name" type="text" ng-model="citationsFiltersCtrl.selectedAuthor" typeahead-editable="false" typeahead-on-select="citationsFiltersCtrl.onSelect($item, $model, $label)" typeahead="author for author in citationsFiltersCtrl.allAuthors | filter:$viewValue | limitTo:8" class="form-control" />
+                    <span class="input-group-btn">
+                        <button type="button"  class="btn btn-default" ng-click="citationsFiltersCtrl.updateAuthorFilter()">Add</button>
+                    </span>
+                </div>
+                <span class="input-error-text" ng-show="citationsFiltersCtrl.inputNotValid">invalid input</span>
+                <span class="input-warning-text" ng-show="citationsFiltersCtrl.authorAlreadyInList">selected author is already in the list</span>
+
+                <scrollable class="form-group well filter-well">
+                    <div class="large-text label label-primary author-label" ng-repeat="author in citationsFiltersCtrl.authorsV">
+                        <em class="fa fa-times-circle author-remove" ng-click="citationsFiltersCtrl.removeAuthorFromFilter(author)"></em>
+                        <span>{{author}}</span>
+                    </div>
+                </scrollable>
+            </div>
+        </div>
+        <div>
+            <legend class="filter-legend">
+                <span ng-class="{'filter-enabled-heading': citationsFiltersCtrl.checkCharacterizations}"><em tooltip="Enabling this filter, you can see the cited articles according to the selected citation functions" tooltip-placement="right" tooltip-popup-delay="500" class="fa fa-info-circle"></em> Functions </span>
+                <label class="switch pull-right">
+                    <input type="checkbox"  ng-model="citationsFiltersCtrl.checkCharacterizations" ng-change="citationsFiltersCtrl.switchColorsFilter()"/>
+                    <span></span>
+                </label>
+            </legend>
+            <div collapse="!citationsFiltersCtrl.checkCharacterizations">
+                <div align="center">
+                    <button type="button" ng-click="citationsFiltersCtrl.setColorsAllChecked(true)" ng-disabled="!citationsFiltersCtrl.checkCharacterizations" class="btn btn-primary btn-sm">Select all</button>
+                    <button type="button" ng-click="citationsFiltersCtrl.setColorsAllChecked(false)" ng-disabled="!citationsFiltersCtrl.checkCharacterizations" class="btn btn-primary btn-sm">Deselect all</button>
+                </div>
+
+                <scrollable class="form-group well filter-well">
+                    <div class="checkbox c-checkbox" ng-repeat="color in citationsFiltersCtrl.characterizationsV">
+                        <label>
+                            <input type="checkbox" ng-model="color.checked" ng-checked="color.checked" ng-click="citationsFiltersCtrl.switchColorChecked(color)" ng-disabled="!citationsFiltersCtrl.checkCharacterizations"  ng-value="color.valueURI" />
+                            <span class="fa fa-check"></span>{{citationsFiltersCtrl.noCamelCase(color.toString)}}
+                        </label>
+                    </div>
+                </scrollable>
+            </div>
+        </div>
+    </div>
+</div>
+

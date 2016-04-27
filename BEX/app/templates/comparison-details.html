@@ -1,0 +1,33 @@
+<!--
+
+    modal dialog comparison details
+
+-->
+
+
+<h3 class="text-center">Comparison details</h3>
+
+<!-- ghVisualization directive-->
+<dh-visualization>
+
+    <div id="compareselect">
+    	<p>
+    	  <input type="radio" id="compareIncoming_A" name="compareType_A" value="incoming" checked="checked"/><label for="compareIncoming_A">incoming</label>
+    	  <input type="radio" id="compareOutgoing_A" name="compareType_A" value="outgoing" /><label for="compareOutgoing_A">outgoing</label>
+    	</p>
+    	<p>
+    	  <select id="author1" class="authorselector" ></select>
+    	</p>
+    	<p>compared with</p>
+        <p>
+    	  <input type="radio" id="compareIncoming_B" name="compareType_B" value="incoming" checked="checked"/><label for="compareIncoming_B">incoming</label>
+    	  <input type="radio" id="compareOutgoing_B" name="compareType_B" value="outgoing" /><label for="compareOutgoing_B">outgoing</label>
+    	</p>
+            <p>
+    	  <select id="author2" class="authorselector" ></select>
+    	</p>
+    </div>
+
+    <div id="comparevis"></div>
+
+</dh-visualization>
