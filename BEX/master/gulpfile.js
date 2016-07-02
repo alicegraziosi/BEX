@@ -55,7 +55,7 @@ var vendor = {
 // SOURCES CONFIG
 var source = {
     scripts: [
-        paths.scripts + 'app.init.js',
+        //paths.scripts + 'app.init.js',
         paths.scripts + 'modules/*.js',
         paths.scripts + 'modules/controllers/*.js',
         paths.scripts + 'modules/directives/*.js',

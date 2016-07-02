@@ -18,12 +18,12 @@ myApp.directive('biblioItem', ["ngDialog","$modal", "ArticleManagerService", "$r
 	        //scope.elemHeight = element.height();
             /* per avere maggiori info sul corrente elemento bibliografico */
             scope.exploreBiblioItem = function() {
-
                 $rootScope.$state.go(
                     'app.article-doi',
                     {
                         doi: scope.itemData.doi.value,
-	                    title: scope.itemData.title
+	                    title: scope.itemData.title,
+                        newSearch: true
                     },
                     {
                         inherit: $rootScope.inheritUrlParams, //eureka!! bastava mettere questo a false per evitare di trascinarsi i parametri nell'url!!
@@ -69,13 +69,8 @@ myApp.directive('biblioItem', ["ngDialog","$modal", "ArticleManagerService", "$r
                         return true;
                     }
                 }
-
                 return false;
             }
-
-
-
-
 
             scope.openAbstractDialog = function() {
                 ngDialog.open({
@@ -100,26 +95,20 @@ myApp.directive('biblioItem', ["ngDialog","$modal", "ArticleManagerService", "$r
                 });
             }
 
-
-
             var ModalBiblioCtrl = function ($scope, $modalInstance) {
-
                 $scope.close = function () {
                     $modalInstance.close('closed');
                 };
-
                 $scope.absText = scope.itemData.abstractTxt.value;
                 $scope.title = scope.itemData.title;
             }
 
             var ModalMotivationsCtrl = ["$scope", function ($scope) {
                 $scope.$storage = {}; //todo: da rivedere: definisco storage per aggirare un possibile bug della direttiva panel-tools, vedere anche generateId()
-
                 $scope.empInTxtRefPointer = function(sentenceTxt, irpTxt) {
                     var empSentence = sentenceTxt.replace(irpTxt, "<span class='irp'><b>"+irpTxt+"</b></span>")
                     return empSentence;
                 };
-
                 $scope.generateId = function($index){
                     var elemId = "motivation_"+$index+Math.floor((Math.random() * 100000) + 1);
                     var data = angular.fromJson($scope.$storage["panelState"]);
@@ -131,15 +120,10 @@ myApp.directive('biblioItem', ["ngDialog","$modal", "ArticleManagerService", "$r
                     return elemId;
                 }
             }];
-
-
-
-
         },
 		controller: ["$scope","$element", function($scope,$element) {
 			$scope.biblioId = "biblio_"+Date.now();
 			$scope.chartId = "donut_"+Date.now();
 		}]
     };
-
 }]);

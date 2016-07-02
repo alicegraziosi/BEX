@@ -5,6 +5,13 @@ myApp.controller('SettingsController',['$rootScope','$localStorage','$sessionSto
 	self.endpoints = EndpointsManager.getEndpoints();
 	self.selectedEndpoint = EndpointsManager.getSelectedEndpoint();
 	self.newEndpoint = "";
+	self.maxNumber = "";
+	
+    if($rootScope.maxNumber) {
+        self.maxNumber = $rootScope.maxNumber;
+    } else {
+    	$rootScope.maxNumber = self.maxNumber;
+    }
 
 	self.isSelectedEndpoint = function(value) {
 		return value === self.selectedEndpoint;
@@ -17,6 +24,10 @@ myApp.controller('SettingsController',['$rootScope','$localStorage','$sessionSto
 	self.addEndpoint = function() {
 		EndpointsManager.addEndpoint(self.newEndpoint);
 		self.newEndpoint = "";
+	}
+
+	self.setMaxNumber = function(){
+		$rootScope.maxNumber = parseInt(self.maxNumber);
 	}
 
 	self.setSelectedEndpoint = function(index) {

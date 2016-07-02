@@ -8,14 +8,20 @@ var myApp = angular.module('SLP_WebApp', ['angle']);
 //myApp.config(["$locationProvider", function($locationProvider) {
 //	$locationProvider.html5Mode(true);
 //}]);
+
+
+myApp.config(['$httpProvider', function($httpProvider) {
+        $httpProvider.defaults.useXDomain = true;
+        delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    }
+]);
+
 myApp.run([ "$log","$rootScope", "$state", "$stateParams", function($log,$rootScope, $state, $stateParams) {
 
     //guide: https://github.com/angular-ui/ui-router/wiki/Quick-Reference#note-about-using-state-within-a-template
     $rootScope.$state = $state;
     $rootScope.$stateParams = $stateParams;
     $rootScope.offsidebarOverlap = true;
-
-
     $rootScope.encodeCite = {
         'http://purl.org/spar/cito/agreesWith': 1,
         'http://purl.org/spar/cito/cites': 2,
@@ -112,7 +118,7 @@ myApp.run([ "$log","$rootScope", "$state", "$stateParams", function($log,$rootSc
 
 
     $rootScope.decodeCite = [
-	    "",
+    	"",
 	    "http://purl.org/spar/cito/agreesWith",
 	    "http://purl.org/spar/cito/cites",
 	    "http://purl.org/spar/cito/citesAsAuthority",
@@ -209,7 +215,7 @@ myApp.run([ "$log","$rootScope", "$state", "$stateParams", function($log,$rootSc
     $rootScope.arr_colors = [
 	    {},
 	    {'color': '#9edae5', 'prop': 'http://purl.org/spar/cito/agreesWith'},
-	    {'color': '', 'prop': 'http://purl.org/spar/cito/cites'},
+	    {'color': '#730034', 'prop': 'http://purl.org/spar/cito/cites'},
 	    {'color': '#ffbb78', 'prop': 'http://purl.org/spar/cito/citesAsAuthority'},
 	    {'color': '#aec7e8', 'prop': 'http://purl.org/spar/cito/citesAsDataSource'},
 	    {'color': '#843c39', 'prop': 'http://purl.org/spar/cito/citesAsEvidence'},
@@ -454,10 +460,6 @@ myApp.run([ "$log","$rootScope", "$state", "$stateParams", function($log,$rootSc
 	$rootScope.inheritUrlParams = false;
 	$rootScope.paramsTokensDelimiter = ";";
 	$rootScope.showRefiningOptions = {value: false}
-
-
-
-
 }]);
 
 /* costanti per le tipologie di risultati */
@@ -466,8 +468,8 @@ myApp
         abstractSearch: "abstractSearch",
         titleSearch: "titleSearch",
         authorSearch: "authorSearch",
-        //singleArticle: "singleArticle",
 		singleArticleDoi: "singleArticleDoi",
+		venueSearch: "venueSearch",
 		list: "list"
     })
 	.constant("ORDER_BY", {
@@ -486,7 +488,14 @@ myApp
 		JournalReviewArticle:"Journal Review Article",
 		JournalEditorial:"Journal Editorial",
 		Letter:"Letter",
-		Article:"Article"
+		Article:"Article",
+		ProceedingsPaper: "ProceedingsPaper",
+		BookChapter: "BookChapter",
+		AcademicProceedings : "AcademicProceedings",
+		BibliographicReference: "BibliographicReference",
+		ReportDocument: "ReportDocument",
+		ExpressionCollection: "ExpressionCollection",
+		Book: "Book"
 	})
     .constant("FILTERS_TYPE", {
         Articles_types:"type",
@@ -502,181 +511,210 @@ myApp
 	.constant("CITATIONS_REFINEMENTS_PARAMS", "&orderCitBy&sortCit&citAfterYear&selfCitations&citAuthors&citFunctions");
 
 myApp.config(["$stateProvider","SEARCH_TYPE","ARTICLES_REFINEMENTS_PARAMS", "CITATIONS_REFINEMENTS_PARAMS", function($stateProvider, SEARCH_TYPE, ARTICLES_REFINEMENTS_PARAMS, CITATIONS_REFINEMENTS_PARAMS) {
-  $stateProvider
-      .state('app.home-search', {
-        url: '/homeSearch',
-        title: 'Search',
-        templateUrl: getMyBasepath('home-search.html'),
-        controller: 'HomeSearchController',
-        controllerAs: 'HomeSearchCtrl'
-      })
-      .state('app.articles-results', {
-        url: '/articles/?abstract&author&title&list'+ARTICLES_REFINEMENTS_PARAMS+CITATIONS_REFINEMENTS_PARAMS,
-        params: {
-            newSearch: false,               // se newSearch=true vengono rimpiazzati i risultati di ricerca in LocalStorage e vengono rimossi tutti gli states
-            searchQuery: undefined,          // query di ricerca (abstract, titolo, nome autore)
-			searchType: undefined,
-            noReload: false
-        },
-        templateUrl: getMyBasepath('articles-results.html'),
-        controller: 'ArticlesResultsController',
-        controllerAs: 'ArticlesResultsCtrl',
-        onEnter: ["StatesManagerService","$stateParams","ArticlesFiltersManager", function(StatesManagerService,$stateParams,ArticlesFiltersManager){
-
-	        //todo: da rifattorizzare, si puÚ fare di meglio
-	        //todo: il parametro searchType Ë da eliminare
-            if (oneSearchParam($stateParams)) {
-                if ($stateParams.abstract) {
-	                $stateParams.searchType = SEARCH_TYPE.abstractSearch;
-	                $stateParams.searchQuery = $stateParams['abstract']
-                } else if ($stateParams.author) {
-		            $stateParams.searchType = SEARCH_TYPE.authorSearch;
-	                $stateParams.searchQuery = $stateParams['author']
-	            } else if ($stateParams.title) {
-		            $stateParams.searchType = SEARCH_TYPE.titleSearch;
-	                $stateParams.searchQuery = $stateParams['title']
-	            } else if ($stateParams.list) {
-	                $stateParams.searchType = SEARCH_TYPE.list;
-	                $stateParams.searchQuery = $stateParams['list']
-                }
-            } else {
-	            //todo: notificare che la modalit‡ di ricerca Ë unica
-            }
-
-            function oneSearchParam(params) {
-                //todo: da implementare
-                return true;
-            }
-            StatesManagerService.setState("app.articles-results",$stateParams);
-
-
-        }],
-		reloadOnSearch: false
-      })
-	  .state ('app.author-articles', {
+    $stateProvider
+		.state('app.home-search', {
+			url: '/homeSearch',
+			title: 'Search',
+			templateUrl: getMyBasepath('home-search.html'),
+			controller: 'HomeSearchController',
+			controllerAs: 'HomeSearchCtrl'
+		})
+		.state('app.articles-results', {
+			url: '/articles/?abstract&author&title&list&venue'+ARTICLES_REFINEMENTS_PARAMS+CITATIONS_REFINEMENTS_PARAMS,
+			title: 'Articles Results',
+			params: {
+				newSearch: false,  // se newSearch=true vengono rimpiazzati i risultati di ricerca in LocalStorage e vengono rimossi tutti gli states
+				searchQuery: undefined,  // query di ricerca (abstract, titolo, nome autore)
+				authorUri: undefined,
+				searchType: undefined,
+				noReload: false
+			},
+        	templateUrl: getMyBasepath('articles-results.html'),
+        	controller: 'ArticlesResultsController',
+        	controllerAs: 'ArticlesResultsCtrl',
+        	onEnter: ["StatesManagerService", "$stateParams", "ArticlesFiltersManager", 
+	        	function(StatesManagerService, $stateParams, ArticlesFiltersManager){
+	        		console.log($stateParams);
+		            if (oneSearchParam($stateParams)) {
+		                if ($stateParams.abstract) {
+			                $stateParams.searchType = SEARCH_TYPE.abstractSearch;
+			                $stateParams.searchQuery = $stateParams['abstract']
+		                } else if ($stateParams.author) {
+				            $stateParams.searchType = SEARCH_TYPE.authorSearch;
+		                	$stateParams.searchQuery = $stateParams['author'];
+			                $stateParams.authorUri = $stateParams['authorUri'];
+			                $stateParams.authorName = $stateParams['authorName'];
+			                $stateParams.authorSurname = $stateParams['authorSurname'];
+			            } else if ($stateParams.title) {
+				            $stateParams.searchType = SEARCH_TYPE.titleSearch;
+			                $stateParams.searchQuery = $stateParams['title']
+			            } else if ($stateParams.venue) {
+				            $stateParams.searchType = SEARCH_TYPE.venueSearch;
+			                $stateParams.searchQuery = $stateParams['venue']
+			            }
+		            } else {
+			            //todo: notificare che la modalit√† di ricerca √® unica
+		            }
+		            function oneSearchParam(params) {
+		                //todo: da implementare
+		                return true;
+		            }
+		            StatesManagerService.setState("app.articles-results", $stateParams);
+	        	}],
+			reloadOnSearch: false
+      	})
+	  	.state ('app.author-articles', {
 		  url: '/author/:authorId/articles/?'+ARTICLES_REFINEMENTS_PARAMS+CITATIONS_REFINEMENTS_PARAMS,
 		  title: 'Author articles',
 		  params: {
-			  newSearch: false,               // se newSearch=true vengono rimpiazzati i risultati di ricerca in LocalStorage e vengono rimossi tutti gli states
-			  searchQuery: undefined,          // query di ricerca (abstract, titolo, nome autore)
-			  searchType: SEARCH_TYPE.authorSearch,
+			  newSearch: false,  // se newSearch=true vengono rimpiazzati i risultati di ricerca in LocalStorage e vengono rimossi tutti gli states
+			  searchQuery: undefined,  // query di ricerca (abstract, titolo, nome autore)
+			  authorUri: undefined,
+			  authorName: undefined,
+			  authorSurname: undefined,
+			  searchType: undefined,
 			  noReload: false
 		  },
-		  templateUrl: getMyBasepath('articles-results.html'),
+		  templateUrl: getMyBasepath('author-results.html'),
 		  controller: 'ArticlesResultsController',
 		  controllerAs: 'ArticlesResultsCtrl',
-		  onEnter: ["ArticlesFiltersManager","StatesManagerService","$stateParams", function(ArticlesFiltersManager,StatesManagerService,$stateParams){
-
-			  $stateParams.searchQuery = $stateParams.authorId;
-			  StatesManagerService.setState("app.author-articles",$stateParams);
+		  onEnter: ["ArticlesFiltersManager","StatesManagerService","$stateParams", 
+		  	function(ArticlesFiltersManager,StatesManagerService,$stateParams){
+		  	  //todo: da rifattorizzare, si pu√≤ fare di meglio
+		        //todo: il parametro searchType √® da eliminare
+	            if (oneSearchParam($stateParams)) {
+	                if ($stateParams.abstract) {
+		                $stateParams.searchType = SEARCH_TYPE.abstractSearch;
+		                $stateParams.searchQuery = $stateParams['abstract']
+	                } else if ($stateParams.author) {
+			            $stateParams.searchType = SEARCH_TYPE.authorSearch;
+		                $stateParams.searchQuery = $stateParams['author'];
+		                $stateParams.authorUri = $stateParams['authorUri'];
+		                $stateParams.authorName = $stateParams['authorName'];
+		                $stateParams.authorSurname = $stateParams['authorSurname'];
+		            } else if ($stateParams.title) {
+			            $stateParams.searchType = SEARCH_TYPE.titleSearch;
+		                $stateParams.searchQuery = $stateParams['title']
+		            } else if ($stateParams.venue) {
+			            $stateParams.searchType = SEARCH_TYPE.venueSearch;
+		                $stateParams.searchQuery = $stateParams['venue']
+		            }
+	            } else {
+		            //todo: notificare che la modalit√† di ricerca √® unica
+	            }
+	            function oneSearchParam(params) {
+	                //todo: da implementare
+	                return true;
+	            }
+			    StatesManagerService.setState("app.author-articles", $stateParams);
 		  }],
 	      reloadOnSearch: false
-	  })
-	  .state ('app.comparisons', {
-		  url: '/comparisons',
-		  title: 'Author comparison',
-		  templateUrl: getMyBasepath('comparisons.html'),
-		  controller: 'ComparisonsController',
-		  controllerAs: 'ComparisonsCtrl'
-	  })
-	  .state('app.article-doi', {
-		  url: '/article/?doi'+CITATIONS_REFINEMENTS_PARAMS,
-		  title: 'Article',
-		  params: {
-              title: "", //non lo setto a null o undefined per un problema di ui-router che li converte in stringa "null" e "undefined", strano...
-			  searchType: SEARCH_TYPE.singleArticleDoi,            // tipologia di ricerca (abstract, titolo, autore)
-			  noReload: false
-		  },
-		  templateUrl: getMyBasepath('articles-results.html'),
-		  controller: 'ArticlesResultsController',
-		  controllerAs: 'ArticlesResultsCtrl',
-		  onEnter: ["StatesManagerService","$stateParams", function(StatesManagerService,$stateParams){
-			  StatesManagerService.setState("app.article-doi",$stateParams);
-		  }],
-		  reloadOnSearch: false
-		  })
-	      .state('app.bookmarks', {
-	          url: '/bookmarks',
-	          title: 'Bookmarks',
-	          templateUrl: getMyBasepath('bookmarks.html'),
-	          controller: 'BookmarksController',
-	          controllerAs: 'BookmarksCtrl'
-	      })
-			.state('app.authors', {
-				url: '/authors',
-				title: 'Authors',
-				templateUrl: getMyBasepath('authors.html'),
-				controller: 'AuthorsController',
-				controllerAs: 'AuthorsCtrl'
-			})
-			.state('app.author-results', {
-				url: '/author/?abstract&author&title&list'+ARTICLES_REFINEMENTS_PARAMS+CITATIONS_REFINEMENTS_PARAMS,
-				params: {
-					newSearch: false,               // se newSearch=true vengono rimpiazzati i risultati di ricerca in LocalStorage e vengono rimossi tutti gli states
-					searchQuery: undefined,          // query di ricerca (abstract, titolo, nome autore)
-					searchType: undefined,
-					noReload: false
-				},
-				templateUrl: getMyBasepath('author-results.html'),
-				controller: 'AuthorResultsController',
-				controllerAs: 'AuthorResultsCtrl',
-				onEnter: ["StatesManagerService","$stateParams","ArticlesFiltersManager", 
-				function(StatesManagerService,$stateParams,ArticlesFiltersManager){
+		})
+		.state('app.article-doi', {
+			url: '/article/?doi'+CITATIONS_REFINEMENTS_PARAMS,
+			title: 'Article',
+			params: {
+				newSearch: false,  // se newSearch=true vengono rimpiazzati i risultati di ricerca in LocalStorage e vengono rimossi tutti gli states
+				//title: "", //non lo setto a null o undefined per un problema di ui-router che li converte in stringa "null" e "undefined", strano...
+				title: "",
+				searchType: SEARCH_TYPE.singleArticleDoi,            // tipologia di ricerca (abstract, titolo, autore)
+				noReload: false
+			},
+			templateUrl: getMyBasepath('articles-results.html'),
+			controller: 'ArticlesResultsController',
+			controllerAs: 'ArticlesResultsCtrl',
+			onEnter: ["StatesManagerService","$stateParams", function(StatesManagerService,$stateParams){
+				StatesManagerService.setState("app.article-doi", $stateParams);
+			}],
+			reloadOnSearch: false
+	  	})
+		.state('app.bookmarks', {
+			url: '/bookmarks',
+			title: 'Bookmarks',
+			templateUrl: getMyBasepath('bookmarks.html'),
+			controller: 'BookmarksController',
+			controllerAs: 'BookmarksCtrl'
+		})
+		.state('app.author-results', {
+			url: '/author/?abstract&author&authorUri&authorName&authorSurname&title&list'+ARTICLES_REFINEMENTS_PARAMS+CITATIONS_REFINEMENTS_PARAMS,
+			params: {
+				newSearch: false,  // se newSearch=true vengono rimpiazzati i risultati di ricerca in LocalStorage e vengono rimossi tutti gli states
+				searchQuery: undefined,  // query di ricerca (abstract, titolo, nome autore)
+				authorUri: undefined,
+				authorName: undefined,
+				authorSurname: undefined,
+				searchType: undefined,
+				noReload: false
+			},
+			templateUrl: getMyBasepath('author-results.html'),
+			controller: 'ArticlesResultsController',
+			controllerAs: 'ArticlesResultsCtrl',
+			onEnter: ["StatesManagerService","$stateParams","ArticlesFiltersManager", 
+			function(StatesManagerService,$stateParams,ArticlesFiltersManager){
+				//todo: da rifattorizzare, si pu√≤ fare di meglio
+				//todo: il parametro searchType √® da eliminare
+				if (oneSearchParam($stateParams)) {
+					if ($stateParams.abstract) {
+						$stateParams.searchType = SEARCH_TYPE.abstractSearch;
+						$stateParams.searchQuery = $stateParams['abstract']
+					} else if ($stateParams.author) {
+			            $stateParams.searchType = SEARCH_TYPE.authorSearch;
+		                $stateParams.searchQuery = $stateParams['author'];
+		                $stateParams.authorUri = $stateParams['authorUri'];
+		                $stateParams.authorName = $stateParams['authorName'];
+		                $stateParams.authorSurname = $stateParams['authorSurname'];
+		            } else if ($stateParams.title) {
+						$stateParams.searchType = SEARCH_TYPE.titleSearch;
+						$stateParams.searchQuery = $stateParams['title']
+					} else if ($stateParams.venue) {
+			            $stateParams.searchType = SEARCH_TYPE.venueSearch;
+		                $stateParams.searchQuery = $stateParams['venue']
+		            }
+				} else {
+					//todo: notificare che la modalit√† di ricerca √® unica
+				}
 
-					//todo: da rifattorizzare, si puÚ fare di meglio
-					//todo: il parametro searchType Ë da eliminare
-					if (oneSearchParam($stateParams)) {
-						if ($stateParams.abstract) {
-							$stateParams.searchType = SEARCH_TYPE.abstractSearch;
-							$stateParams.searchQuery = $stateParams['abstract']
-						} else if ($stateParams.author) {
-							$stateParams.searchType = SEARCH_TYPE.authorSearch;
-							$stateParams.searchQuery = $stateParams['author']
-						} else if ($stateParams.title) {
-							$stateParams.searchType = SEARCH_TYPE.titleSearch;
-							$stateParams.searchQuery = $stateParams['title']
-						} else if ($stateParams.list) {
-							$stateParams.searchType = SEARCH_TYPE.list;
-							$stateParams.searchQuery = $stateParams['list']
-						}
-					} else {
-						//todo: notificare che la modalit‡ di ricerca Ë unica
-					}
-
-					function oneSearchParam(params) {
-						//todo: da implementare
-						return true;
-					}
-					StatesManagerService.setState("app.author-results",$stateParams);
-				}],
-				reloadOnSearch: false
-			})
-      .state('app.settings', {
-          url: '/settings',
-          title: 'Settings',
-          templateUrl: getMyBasepath('settings.html'),
-          controller: 'SettingsController',
-          controllerAs: 'SettingsCtrl'
-      })
-      .state('app.about', {
-          url: '/about',
-          title: 'About',
-          templateUrl: getMyBasepath('about.html'),
-          controller: 'AboutController',
-          controllerAs: 'AboutCtrl'
-      })
-      .state('app.stateTest', {
-          url: '/test/articles/:searchType/:searchQuery?param0&param1',
-          title: 'test',
-          templateUrl: getMyBasepath('testView.html'),
-          controller: 'testController',
-          controllerAs: 'testCtrl',
-          reloadOnSearch: false
-      })
+				function oneSearchParam(params) {
+					//todo: da implementare
+					return true;
+				}
+				StatesManagerService.setState("app.author-results",$stateParams);
+			}],
+			reloadOnSearch: false
+		})
+		.state ('app.comparisons', {
+			url: '/comparisons',
+			title: 'Authors comparison',
+			templateUrl: getMyBasepath('comparisons.html'),
+			controller: 'ComparisonsController',
+			controllerAs: 'ComparisonsCtrl'
+		})
+		.state('app.settings', {
+			url: '/settings',
+			title: 'Settings',
+			templateUrl: getMyBasepath('settings.html'),
+			controller: 'SettingsController',
+			controllerAs: 'SettingsCtrl'
+		})
+		.state('app.about', {
+			url: '/about',
+			title: 'About',
+			templateUrl: getMyBasepath('about.html'),
+			controller: 'AboutController',
+			controllerAs: 'AboutCtrl'
+		})
+		.state('app.stateTest', {
+			url: '/test/articles/:searchType/:searchQuery?param0&param1',
+			title: 'test',
+			templateUrl: getMyBasepath('testView.html'),
+			controller: 'testController',
+			controllerAs: 'testCtrl',
+			reloadOnSearch: false
+		})
 }]);
 
 // Set here the base of the relative path
 // for all app views
 function getMyBasepath(uri) {
-  return 'app/views/appViews/' + uri;
+    return 'app/views/appViews/' + uri;
 }

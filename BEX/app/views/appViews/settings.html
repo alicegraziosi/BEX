@@ -3,36 +3,54 @@
     <h3 class="page-header">Endpoint</h3>
     <div>
         <h4>Switch endpoint <small class="muted-text"> (*please, refresh the page after switching endpoint)</small></h4>
-
         <div ng-repeat="endpoint in SettingsCtrl.endpoints" class="radio c-radio c-radio-nofont">
             <label>
-                <input ng-change="SettingsCtrl.setSelectedEndpoint($index)" type="radio" name="endpointRadio" value="{{endpoint}}" ng-model="SettingsCtrl.selectedEndpoint"/>
-                <span></span>{{endpoint}}</label>
-            <button ng-if="$index > 0" type="button" class="mb-sm btn btn-default" ng-click="SettingsCtrl.removeEndpoint($index)"><em class="fa fa-remove" ></em></button>
+                <input ng-change="SettingsCtrl.setSelectedEndpoint($index)" type="radio" name="endpointRadio" value="{{endpoint}}" 
+                    ng-model="SettingsCtrl.selectedEndpoint"/>
+                    <span></span>{{endpoint}}
+            </label>
+            <button ng-if="$index > 0" class="btn btn-xs btn-secondary" ng-click="SettingsCtrl.removeEndpoint($index)">
+                <em class="fa fa-remove"></em> Remove
+            </button>
         </div>
         <h4>Add new endpoint</h4>
-        <div class="input-group">
+        <div class="input-group col-lg-4">
             <input type="text" ng-model="SettingsCtrl.newEndpoint" required="" class="form-control" placeholder="Insert endpoint URL"/>
-             <span class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="SettingsCtrl.addEndpoint()">Add</button>
-             </span>
+            <span class="input-group-btn">
+                <button class="btn btn-secondary" ng-click="SettingsCtrl.addEndpoint()">
+                    <em class="fa fa-plus"></em> Add
+                </button>
+            </span>
         </div>
     </div>
-
 </div>
 <div class="row">
-    <h3 class="page-header">Storage <small class="muted-text"> (*please, refresh the page after clearing the storage)</small></h3>
+    <h3 class="page-header">Maximum number of articles shown for page</h3>
+    <div class="input-group col-lg-4">
+        <input type="text" ng-model="SettingsCtrl.maxNumber" required="" class="form-control" 
+            placeholder="Insert maximum number of articles shown (default 30)"/>
+        <span class="input-group-btn">
+            <button class="btn btn-secondary" ng-click="SettingsCtrl.setMaxNumber()">
+                <em class="fa fa-plus"></em> Set
+            </button>
+        </span>
+    </div>
+</div>
+<div class="row">
+    <h3 class="page-header">Storage</h3>
     <div>
-        <button popover="All general settings and preferences will be reset." popover-trigger="mouseenter" ng-click="SettingsCtrl.clearLocalStorage()" type="button" class="btn btn-labeled btn-settings btn-warning ">
+        <h4><small class="muted-text"> (*please, refresh the page after clearing the storage)</small></h4>
+        <button popover="All general settings and preferences will be reset." popover-trigger="mouseenter"
+            ng-click="SettingsCtrl.clearLocalStorage()" type="button" class="btn btn-labeled btn-settings btn-warning ">
             <span class="btn-label"><i class="fa fa-warning"></i></span>
             Clear Local Storage
         </button>
     </div>
     <div>
-        <button popover="All current session data will be erased." popover-trigger="mouseenter" ng-click="SettingsCtrl.clearSessionStorage()" type="button" class="btn btn-labeled btn-settings btn-warning ">
+        <button popover="All current session data will be erased." popover-trigger="mouseenter" 
+            ng-click="SettingsCtrl.clearSessionStorage()" type="button" class="btn btn-labeled btn-settings btn-warning ">
             <span class="btn-label"><i class="fa fa-warning"></i></span>
             Clear Session Storage
         </button>
     </div>
-
 </div>

@@ -36,7 +36,13 @@
                         <span class="large-text "><span class="highlighted-txt">{{::itemData.globalCitations}}</span> Global Citations  (updated: {{::itemData.globalCountDate.value}})</span>
                     </div>
                     <div align="center">
-                        <button tooltip="Read abstract"   class="btn btn-oval btn-default btn-lg btn-biblio large-text " ng-click="openAbstractDialog()"><em class="fa fa-file-o"></em></button>
+                        <button ng-show="itemData.abstractTxt.value" tooltip="Read abstract" class="btn btn-oval btn-default btn-lg btn-biblio large-text " 
+                            ng-click="openAbstractDialog()"><em class="fa fa-file-o"></em>
+                        </button>
+                        <button ng-show="!itemData.abstractTxt.value" tooltip="No abstract available"
+                            class="btn btn-oval btn-default btn-lg btn-biblio large-text disabled">
+                            <em class="fa fa-file-o disabled" disabled="disabled"></em>
+                        </button>
                         <button ng-show="itemData.motivations.length > 0" tooltip="motivations for citations" class="btn btn-biblio btn-oval btn-default btn-lg btn-biblio large-text" ng-click="openMotivationsDialog()"><em class="icon-tag"></em></button>
                         <button tooltip="Get article link"   class="btn btn-oval btn-default btn-lg btn-biblio large-text " ng-click="getArticleLink()"><em class="icon-link"></em></button>
                         <a tooltip="External link"  class="btn btn-oval btn-default btn-lg btn-biblio large-text" ng-href="{{::itemData.htmlItem.value}}" target="_blank"><i class="fa fa-external-link"></i></a>

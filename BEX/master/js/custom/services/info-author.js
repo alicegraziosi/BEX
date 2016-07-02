@@ -8,7 +8,6 @@
 myApp
     .factory('AuthorInfoService', ["$http", "$interpolate","$rootScope","EndpointsManager", function($http,$interpolate,$rootScope,EndpointsManager) {
         var endpoint = EndpointsManager.getSelectedEndpoint();
-        //endpoint = "http://localhost:8181/data/query"; //todo: endpoint locale
         var prefixes = $('#prefixes').text();
 
         /* per costruire la query; query presa dallo script nell'html alla quale vengono sostituite le espressioni con ctx */
@@ -21,18 +20,23 @@ myApp
         }
 
         return {
-            requestAuthorArticles: function(familyN, givenN) {
-                var expr = {authorFamilyName: familyN, authorGivenName: givenN};
+            //@guide ottenere articoli di un autore in base al nome(=givenName) e cognome(=familyName)
+            requestAuthorArticles: function(givenName, familyName) {
+                var expr = {givenName: givenName, familyName: familyName};
                 var queryURL = buildQueryURL('#query_authorArticles',expr);
 
                 return $http.get(queryURL);
             },
 
+            //@guide ottenere articoli di un autore in base al nome completo (=fullname)
+            // non usata
+            /*
             requestFullNameAuthorArticles: function(fullName) {
                 var expr = {authorFullName: fullName};
                 var queryURL = buildQueryURL('#query_FullNameAuthorArticles',expr);
 
                 return $http.get(queryURL);
             }
+            */
         }
     }]);

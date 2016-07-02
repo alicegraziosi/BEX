@@ -29,8 +29,6 @@ myApp.directive('donutChart', ["$rootScope","$timeout", function($rootScope, $ti
 				}
 				return data;
 			}
-
-
 			scope.renderChart = function() {
 				//console.log(scope.itemData.citActsInfo);
 				if ($('#'+scope.chartId).length>0) {
@@ -64,7 +62,6 @@ myApp.directive('donutChart', ["$rootScope","$timeout", function($rootScope, $ti
 								}
 							]
 						});
-
 					// visualizza il donut
 					chart.render();
 				}
@@ -76,13 +73,6 @@ myApp.directive('donutChart', ["$rootScope","$timeout", function($rootScope, $ti
 					$timeout(scope.renderChart, 1000);
 				}
 			});
-
-
-
-
-
-
 		}
 	};
-
 }]);

@@ -2,10 +2,10 @@
     <div class="panel-heading article-header panel-min-padding">
         <div class="article-header-info top-header-info">
             <div ng-if="articleData.journalTitle"class="pull-left article-journal">
-                <span  >{{articleData.journalTitle.value}}</span>
+                <span>{{articleData.journalTitle.value}}</span>
             </div>
             <div ng-if="articleData.type"class="pull-left article-type">
-                <span  >{{articleData.type}}</span>
+                <span>{{articleData.type}}</span>
             </div>
             <div ng-if="availableIssue(articleData)" class="pull-left article-vol">
                 <span  class="vol-info">vol. {{articleData.volumeNumber.value}} ({{articleData.issueNumber.value}})</span>
@@ -30,43 +30,39 @@
                 </div>
                 <span class="article-title animated fadeIn">{{articleData.title}}</span>
             </div>
-
             <div>
                 <div class="circle-header" >
                     <em tooltip="Publication year"  tooltip-popup-delay="500" class="icon-calendar biblio-round-icon"></em>
                 </div>
-
                 <span class="article-pub-year">{{articleData.publicationYear}}</span>
             </div>
             <div>
                 <div class="circle-header" >
                     <em tooltip="Authors"  tooltip-popup-delay="500" class="fa fa-users biblio-round-icon"></em>
                 </div>
-
                 <span tooltip="show author articles" class="label label-author pointer animated bounceIn" ng-repeat="author in articleData.authors" ng-click="exploreAuthor(author.givenName.value, author.familyName.value)">  {{author.givenName.value}} {{author.familyName.value}} </span>
             </div>
         </div>
-
-        <div  tooltip="Show details"  tooltip-popup-delay="500" align="center" class="show-article-info" ng-click="toggleArticleDetails(articleData)">
+        <div tooltip="Show details"  tooltip-popup-delay="500" align="center" class="show-article-info" ng-click="toggleArticleDetails(articleData)">
             <i ng-class="{'fa fa-chevron-down fa-2x': articleIsCollapsed, 'fa fa-chevron-up fa-2x': !articleIsCollapsed}"></i>
         </div>
     </div>
-
     <div class="panel-body" collapse="articleIsCollapsed">
         <div class="row">
             <div class="col-lg-12">
-                <!-- START panel-->
-                <div id="abstract_{{articleIndex}}" class="panel panel-default" ng-init="isCollapsed = false">
+                <div ng-show="!articleData.abstractTxt.value" class="alert alert-info" role="alert">
+                    <em class="icon-info"></em> Abstract not available for this article
+                </div>
+                <div id="abstract_{{articleIndex}}" ng-show="articleData.abstractTxt.value" 
+                    class="panel panel-default" ng-init="isCollapsed = true">
                     <div class="panel-heading">
                         <span class="collapse-heading">Abstract</span>
                         <i class="pull-right collapse-btn" ng-click="isCollapsed = !isCollapsed" ng-class="{'fa fa-plus-square fa-2x': isCollapsed, 'fa fa-minus-square fa-2x': !isCollapsed}"></i>
                     </div>
                     <div class="panel-body" collapse="isCollapsed">
-                        <div ng-show="!articleData.abstractTxt.value" class="alert alert-info col-lg-2 col-md-4 col-sm-4"><em class="icon-info"></em> Abstract not available</div>
-                        <p>{{articleData.abstractTxt.value}}</p>
+                        <p ng-if="articleData.abstractTxt">{{articleData.abstractTxt.value}}</p>
                     </div>
                 </div>
-                <!-- END panel-->
             </div>
         </div>
         <!-- START panel tab-->
@@ -82,7 +78,14 @@
                             <div class="row row-table">
                                 <div class="col-xs-6 br">
                                     <em class="fa fa-quote-left fa-2x"></em>
-                                    <h4 class="m0">{{articleData.outCitActsNum}} total citations to {{articleData.citedArticlesNum}} articles</h4>
+                                    <!-- se ci sono motivi citazionali -->
+                                    <h4 class="m0" ng-if="articleData.outCitActsNum >= articleData.citedArticlesNum">
+                                        {{articleData.outCitActsNum}} total citations to {{articleData.citedArticlesNum}} articles
+                                    </h4>
+                                    <!-- se non ci sono motivi citazionali -->
+                                    <h4 class="m0" ng-if="articleData.outCitActsNum < articleData.citedArticlesNum">
+                                        {{articleData.citedArticlesNum}} articles cited
+                                    </h4>
                                 </div>
                                 <div class="col-xs-6 br">
                                     <em class="fa fa-clock-o fa-2x"></em>
@@ -116,7 +119,14 @@
                             <div class="row row-table">
                                 <div ng-class="{'col-xs-4': articleData.inCitActs > 0, 'col-xs-6': articleData.inCitActs == 0}" class="br">
                                     <em class="fa fa-quote-left fa-2x"></em>
-                                    <h4 class="m0"> Cited {{articleData.inCitActs}} times by {{articleData.inNumCites}} articles </h4>
+                                    <!-- se ci sono motivi citazionali -->
+                                    <h4 class="m0" ng-if="articleData.inCitActs >= articleData.inNumCites"> 
+                                        Cited {{articleData.inCitActs}} times by {{articleData.inNumCites}} articles 
+                                    </h4>
+                                    <!-- se non ci sono motivi citazionali -->
+                                    <h4 class="m0" ng-if="articleData.inCitActs < articleData.inNumCites"> 
+                                        Cited by {{articleData.inNumCites}} articles
+                                    </h4>
                                 </div>
                                 <div ng-class="{'col-xs-4': articleData.inCitActs > 0, 'col-xs-6': articleData.inCitActs == 0}" class="br">
                                     <em class="icon-globe fa-2x"></em>
@@ -149,6 +159,5 @@
         </div>
         <!-- END panel tab-->
     </div>
-
     <div class="panel-footer" collapse="articleIsCollapsed"><strong>DOI:</strong> {{articleData.doi}}</div>
 </div>

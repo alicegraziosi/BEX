@@ -77,13 +77,14 @@ myApp.directive('articleItem', ["ngDialog", "ArticleManagerService","$rootScope"
 
             /* per visualizzare tutti gli articoli di un autore */
             $scope.exploreAuthor = function(givenName, familyName) {
-                $rootScope.$state.go(
-	                'app.author-articles',
+                $rootScope.$state.go('app.author-articles',
 	                {
-	                    newSearch: false,                                // è una nuova ricerca, quindi cancella tutti gli states e salva in sessionStorage i risultati
-	                    searchType: SEARCH_TYPE.authorSearch,           // è una ricerca per autore
+	                    newSearch: false,  // è una nuova ricerca, quindi cancella tutti gli states e salva in sessionStorage i risultati
+	                    searchType: SEARCH_TYPE.authorSearch,  // ricerca per autore
 	                    searchQuery: givenName+" "+familyName,        // nome dell'autore
-		                authorId:  givenName+" "+familyName
+		                authorId:  givenName+" "+familyName,
+                        authorName: givenName,  // nome 
+                        authorSurname: familyName,  // cognome
 	                },
 	                {
                         inherit: $rootScope.inheritUrlParams, //eureka!! bastava mettere questo a false per evitare di trascinarsi i parametri nell'url!!
@@ -125,36 +126,19 @@ myApp.directive('articleItem', ["ngDialog", "ArticleManagerService","$rootScope"
 		        return maxYear;
 	        }
 
+            // richiede le info sulle citazioni dell' articolo
+            // expression http://www.semanticlancet.eu/resource/1-s2.0-S1570826808000413/version-of-record per semantic lancet
+            // expression ... per springer
+            // articleData.expression === articleData.expression.value
+            function checkArticlesCitationsDetails(articleData) {
+                if (!articleData.citationsDetails) {
+                    ArticleManagerService.getCitationsInfo(articleData.expression, articleData.authors);
+                }
+                if (!articleData.biblioDetails) {
+                    ArticleManagerService.getBiblioInfo(articleData.expression, articleData.authors);
+                }
+             }
 
-
-            //$scope.getUniqueCitingItems = function(citingItems) {
-            //    var prevExp = "";
-            //    var tmpExp = "";
-            //    var data = [];
-            //    console.log(citingItems);
-            //
-            //    for (var key in citingItems) {
-            //        var tmpItem = citingItems[key];
-            //        tmpExp = tmpItem.citingExp.value;
-            //
-            //        if (tmpExp !== prevExp) {
-            //            data.push(tmpItem)
-            //        }
-            //
-            //        prevExp = tmpExp;
-            //    }
-            //
-            //    console.log(data);
-            //}
-
-	        function checkArticlesCitationsDetails(articleData) {
-		        if (!articleData.citationsDetails) {
-			        ArticleManagerService.getCitationsInfo(articleData.expression.value, articleData.authors);
-		        }
-		        if (!articleData.biblioDetails) {
-			        ArticleManagerService.getBiblioInfo(articleData.expression.value, articleData.authors);
-		        }
-	        }
 
             /* se stai leggendo queste righe di codice probabilmente non stai capendo che senso abbiano...contattami*/
 	        if ($scope.checkBookmark.value) {

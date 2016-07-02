@@ -1,33 +1,34 @@
-<!--
-
-    modal dialog comparison details
-
+<!-- 
+	contenuto del dialog
 -->
 
-
-<h3 class="text-center">Comparison details</h3>
-
-<!-- ghVisualization directive-->
-<dh-visualization>
-
-    <div id="compareselect">
-    	<p>
-    	  <input type="radio" id="compareIncoming_A" name="compareType_A" value="incoming" checked="checked"/><label for="compareIncoming_A">incoming</label>
-    	  <input type="radio" id="compareOutgoing_A" name="compareType_A" value="outgoing" /><label for="compareOutgoing_A">outgoing</label>
-    	</p>
-    	<p>
-    	  <select id="author1" class="authorselector" ></select>
-    	</p>
-    	<p>compared with</p>
-        <p>
-    	  <input type="radio" id="compareIncoming_B" name="compareType_B" value="incoming" checked="checked"/><label for="compareIncoming_B">incoming</label>
-    	  <input type="radio" id="compareOutgoing_B" name="compareType_B" value="outgoing" /><label for="compareOutgoing_B">outgoing</label>
-    	</p>
-            <p>
-    	  <select id="author2" class="authorselector" ></select>
-    	</p>
+<div class="row" align="center">
+    <div align="center" id="panelSearch" class="panel panel-default col-centered col-lg-8 col-md-10 col-sm-12">
+        <div class="panel-body text-center">
+            <h1>Author comparison</h1>
+        </div>
+        <!-- START panel-->
+        <div class="panel-body">
+            <div class="row text-center">
+                <div class="p row-centered">
+                    <div class="btn-group col col-centered">
+                        <label class="btn btn-primary ng-pristine ng-untouched ng-valid active"
+                            ng-model="ngDialogData.comparisonType"
+                            btn-radio="'incoming'" ng-change=""><em class="fa fa-sign-in fa-lg"></em> Incoming</label>
+                        <label class="btn btn-primary ng-pristine ng-untouched ng-valid" 
+                            ng-model="ngDialogData.comparisonType"
+                            btn-radio="'outgoing'" ng-change=""><em class="fa fa-sign-out fa-lg"></em> Outgoing</label>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div id="comparevis"></div>
-
+<!-- grafici -->
+<!-- dhVisualization directive-->
+<dh-visualization 
+    author-uno=ngDialogData.authorUno 
+    author-due=ngDialogData.authorDue
+    comparison-type=ngDialogData.comparisonType>
 </dh-visualization>

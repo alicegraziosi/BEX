@@ -1,0 +1,627 @@
+
+<!-- query: tutte le venues (=riviste=Journal) OK 126 
+<script id="query_venuesList" type="text/ng-template">
+    select distinct ?journalTitle
+    where {
+        ?journal a fabio:Journal;
+        	  a fabio:Expression;
+        	  dcterms:title ?journalTitle;
+    		    datacite:hasIdentifier ?id.
+  
+  		?id a datacite:Identifier;
+    		  datacite:usesIdentifierScheme datacite:occ;
+    		  litre:hasLiteralValue ?literalValue.
+    }
+</script>-->
+<!-- query: tutte le venues (=riviste=Journal o Book) OK 207  -->
+<script id="query_venuesList" type="text/ng-template">
+    select distinct ?journalTitle
+    where {
+        {
+        ?journal a fabio:Journal;
+            a fabio:Expression;
+            dcterms:title ?journalTitle;
+            datacite:hasIdentifier ?id.
+  
+        ?id a datacite:Identifier;
+            datacite:usesIdentifierScheme datacite:occ;
+            litre:hasLiteralValue ?literalValue.
+        }
+        union
+        {
+            ?journal a fabio:Book;
+                dcterms:title ?journalTitle;
+                datacite:hasIdentifier [
+                    a datacite:Identifier;
+                        datacite:usesIdentifierScheme datacite:isbn;
+                        litre:hasLiteralValue ?bookIdVal;
+                  ]
+        }
+    }
+</script>
+
+<!-- query: tutti gli autori CI SONO DUPLICATI (ma OK) -->
+<script id="query_allAuthors" type="text/ng-template">
+  	select distinct ?person ?givenName ?familyName
+  	where {
+    		?person a foaf:Agent;
+      		  foaf:givenName ?givenName;
+          	foaf:familyName ?familyName;
+          	pro:holdsRoleInTime ?role.
+      
+      	?role a pro:RoleInTime;
+          	pro:withRole pro:author;
+          	pro:relatesToDocument ?doc.
+      
+        ?doc a fabio:Expression;
+        	  dcterms:title ?articleTitle.
+  	}
+  	ORDER BY ASC(?familyName) ASC(?givenName)
+</script>
+
+<!-- query: articoli di una venue(=rivista=Journal) (quindi articoli di tipo JournalArticle) OK-->
+<script id="query_venueArticles" type="text/ng-template">
+    select ?work
+    where {
+       ?work a fabio:Expression;
+          dcterms:title ?articleTitle;
+          fabio:hasPublicationYear ?publicationYear;
+        	frbr:embodiment ?manifestation;
+                frbr:partOf [ a fabio:JournalIssue;
+                    frbr:partOf [ a fabio:JournalVolume; 
+                      frbr:partOf [ a fabio:Journal; 
+                      		dcterms:title "{{journalTitle}}";			  
+                  	]
+                  ]
+                ].
+      
+        OPTIONAL{
+          ?manifestation a fabio:Manifestation;
+            prism:startingPage ?startingPage;
+            prism:endingPage ?endingPage.
+        }
+    }
+</script> 
+<!--
+<script id="query_venueArticles" type="text/ng-template">
+    select ?work
+    where {
+       ?work a fabio:Expression;
+          dcterms:title ?articleTitle;
+          fabio:hasPublicationYear ?publicationYear;
+          frbr:embodiment ?manifestation.
+        OPTIONAL{
+              ?work  frbr:partOf [ a fabio:JournalIssue;
+                    frbr:partOf [ a fabio:JournalVolume; 
+                      frbr:partOf [ a fabio:Journal; 
+                          dcterms:title "{{journalTitle}}";       
+                    ]
+                  ]
+                ].
+        }
+      
+      OPTIONAL{
+        ?work  frbr:partOf [a fabio:Book;
+                dcterms:title ?journalTitle;
+                datacite:hasIdentifier [
+                    a datacite:Identifier;
+                        datacite:usesIdentifierScheme datacite:isbn;
+                        litre:hasLiteralValue ?bookIdVal;
+                  ]
+            ]
+      }
+      
+        OPTIONAL{
+          ?manifestation a fabio:Manifestation;
+            prism:startingPage ?startingPage;
+            prism:endingPage ?endingPage.
+        }
+    }
+</script>-->
+
+
+<!-- query: info generiche su un articolo (di tipo JournalArticle o BookChapter, no Book) OK-->
+<script id="query_articleInfo" type="text/template">
+select distinct ?journalTitle ?title ?doi ?expression ?volumeNumber ?issueNumber ?abstractTxt ?publicationYear ?htmlItem ?authorsList  ?globalCountSource ?globalCountValue ?globalCountDate
+    where {
+        <{{work}}> a fabio:Expression;
+              dcterms:title ?title;
+              fabio:hasPublicationYear ?publicationYear.
+
+        OPTIONAL{
+            <{{work}}> frbr:partOf [ a fabio:Book;
+                dcterms:title ?journalTitle;
+                datacite:hasIdentifier [
+                    a datacite:Identifier;
+                        datacite:usesIdentifierScheme datacite:isbn;
+                        litre:hasLiteralValue ?bookIdVal;
+                  ]
+              ].
+        }
+  
+        OPTIONAL{
+         <{{work}}> frbr:partOf [ a fabio:JournalIssue, fabio:Expression;
+                datacite:hasIdentifier ?issueIdentifier;
+                fabio:hasSequenceIdentifier ?issueNumber;
+                frbr:partOf [ a fabio:JournalVolume, fabio:Expression;
+                    datacite:hasIdentifier ?volumeIdentifier;
+                    fabio:hasSequenceIdentifier ?volumeNumber;
+                    frbr:partOf [ a fabio:Journal; 
+                        dcterms:title ?journalTitle;        
+                    ]
+                ]
+            ].
+        }
+        
+        OPTIONAL{
+            <{{work}}> frbr:embodiment [ a fabio:Manifestation;
+                prism:startingPage ?startingPage;
+                prism:endingPage ?endingPage;].
+        }
+    
+    
+        OPTIONAL{
+            <{{work}}> datacite:hasIdentifier [ a datacite:Identifier;
+                datacite:usesIdentifierScheme datacite:occ;
+                litre:hasLiteralValue ?bookChapterIdVal;].
+        }
+    
+        OPTIONAL{
+            <{{work}}> datacite:hasIdentifier [ a datacite:Identifier;
+                datacite:usesIdentifierScheme datacite:doi;
+                litre:hasLiteralValue ?doi;].
+        }
+
+        OPTIONAL{
+            <{{work}}> datacite:hasIdentifier [
+                a datacite:Identifier;
+                datacite:usesIdentifierScheme datacite:url; 
+                litre:hasLiteralValue ?htmlItem].
+        }
+    }
+</script>
+
+<!--  query: tipo di un articolo OK-->
+<script id="query_articleType" type="text/template">
+    select ?type
+    where {
+        <{{expression}}> a ?type.
+        FILTER (?type != fabio:Expression)
+    }
+</script>
+
+<!-- query: autori di un articolo OK -->
+<script id="query_getAuthorList" type="text/template">
+    select ?givenName ?familyName (concat(?givenName, " ",?familyName) as ?fullName)
+    where{
+        <{{journalArticle}}> a fabio:Expression.
+   
+        ?agent a foaf:Agent;
+            foaf:givenName ?givenName;
+            foaf:familyName ?familyName;
+            pro:holdsRoleInTime ?role.
+    
+        ?role a pro:RoleInTime;
+            pro:withRole pro:author;
+            pro:relatesToDocument <{{journalArticle}}>.
+    }
+</script>
+
+
+<!-- query: lista di articoli con una certa stringa nel titolo OK -->
+<!-- LIMIT 50 -->
+<script id="query_articlesWork_fromTitle" type="text/template">
+    select distinct ?work 
+    where {
+        ?work a fabio:Expression;
+            a ?type;
+            dcterms:title ?title.
+        FILTER NOT EXISTS {?work a fabio:Book}
+        FILTER NOT EXISTS {?work a fabio:Journal}
+        FILTER regex(?title, "{{title}}", "i")
+    }
+</script>
+
+<!-- query: numero di citazioni uniche (cito:cites) in entrata (verso un determinato articolo) OK -->
+<script id="query_incomingCites" type="text/template">
+    select (count(?expr) as ?numCites)
+    where {
+        ?expr a fabio:Expression;
+        cito:cites <{{expression}}>.
+    }
+</script>
+
+<!-- query: numero di citazioni in entrata (no citationActs) OK-->
+<script id="query_incomingCitationsActs" type="text/template">
+    select (count(?citAct) as ?numCitActs) (count(?expr) as ?numCites)
+    where {
+        ?expr a fabio:Expression;
+        cito:cites <{{expression}}>.  
+    }
+</script>
+
+<!-- query: numero di articoli citati (no citationActs) OK-->
+<script id="query_outgoingCitationsActs" type="text/template">
+    select (count(?citAct) as ?numCitActs) (count(?expr) as ?numCites)
+    where {
+        <{{expression}}> cito:cites ?expr.
+        ?expr a fabio:Expression;
+            a ?type.
+        FILTER(?type != fabio:Expression).  
+    }
+</script>
+
+<!-- query: numero di citation acts in entrata (raggruppati per colore) NO -->
+<script id="query_incomingCitationsActsColor" type="text/template">
+  select ?color (count(?color) as ?count)
+  where {
+     ?citAct a cito:CitationAct;
+           cito:hasCitingEntity ?citingEntity;
+           cito:hasCitedEntity <{{expression}}>;
+           cito:hasCitationCharacterization ?color
+  }
+  group by (?color)
+</script>
+
+
+<!-- query: info sulla citazione (colore) e sugli articoli citati (cited entity) da un paper (citing entity) a partire dai citation acts-->
+<script id="query_biblioInfo" type="text/template">
+   select ?color ?citedEntityExpr ?work ?authorsList ?title ?publicationYear ?htmlItem
+   where {
+        ?citAct a cito:CitationAct;
+                cito:hasCitingEntity <{{expression}}>;
+                cito:hasCitedEntity ?citedEntityExpr;
+                cito:hasCitationCharacterization ?color.
+
+        ?citedEntityExpr a fabio:Expression;
+                dcterms:title ?title;
+                frbr:embodiment ?man;
+                fabio:hasPublicationYear ?publicationYear;
+                frbr:realizationOf ?work.
+
+        ?work a fabio:Work;
+            frbr:creator ?authorsList.
+
+
+       ?authorsList a co:List.
+
+       ?man a fabio:Manifestation, fabio:WebPage;
+                dcterms:format <http://purl.org/NET/mediatypes/text/html>;
+                frbr:exemplar ?htmlItem.
+   }
+</script>
+
+<!-- query: info sugli articoli citati (cito:cites, quindi articoli unici) da un articolo (partendo dall'expression) OK -->
+<script id="query_citedArticles" type="text/template">
+   select distinct ?doi ?citedExpression ?articleWork ?articleExpression ?authorsList ?title ?publicationYear ?abstractTxt ?htmlItem ?globalCountValue ?globalCountDate
+   where {
+        <{{expression}}> cito:cites ?citedExpression.
+
+        ?citedExpression a fabio:Expression;
+              dcterms:title ?title;
+              fabio:hasPublicationYear ?publicationYear.
+
+        OPTIONAL{
+            ?citedExpression frbr:partOf [ a fabio:Book;
+                dcterms:title ?journalTitle;
+                datacite:hasIdentifier [
+                    a datacite:Identifier;
+                        datacite:usesIdentifierScheme datacite:isbn;
+                        litre:hasLiteralValue ?bookIdVal;
+                  ]
+              ].
+        }
+  
+        OPTIONAL{
+            ?citedExpression frbr:partOf [ a fabio:JournalIssue, fabio:Expression;
+                datacite:hasIdentifier ?issueIdentifier;
+                fabio:hasSequenceIdentifier ?issueNumber;
+                frbr:partOf [ a fabio:JournalVolume, fabio:Expression;
+                    datacite:hasIdentifier ?volumeIdentifier;
+                    fabio:hasSequenceIdentifier ?volumeNumber;
+                    frbr:partOf [ a fabio:Journal; 
+                        dcterms:title ?journalTitle;        
+                    ]
+                ]
+            ].
+        }
+        
+        OPTIONAL{
+            ?citedExpression frbr:embodiment [ a fabio:Manifestation;
+                prism:startingPage ?startingPage;
+                prism:endingPage ?endingPage;].
+        }
+    
+    
+        OPTIONAL{
+            ?citedExpression datacite:hasIdentifier [ a datacite:Identifier;
+                datacite:usesIdentifierScheme datacite:occ;
+                litre:hasLiteralValue ?bookChapterIdVal;].
+        }
+    
+        OPTIONAL{
+            ?citedExpression datacite:hasIdentifier [ a datacite:Identifier;
+                datacite:usesIdentifierScheme datacite:doi;
+                litre:hasLiteralValue ?doi;].
+        }
+
+        OPTIONAL{
+            ?citedExpression datacite:hasIdentifier [
+                a datacite:Identifier;
+                datacite:usesIdentifierScheme datacite:url; 
+            litre:hasLiteralValue ?htmlItem].
+        }
+   }
+</script>
+
+<!-- query: quante volte un citing entity cita un cited entity per un certo motivo (colore) NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO -->
+<script id="query_citationActsInfo" type="text/template">
+   select ?color (count(?citationAct) as ?numCitActs)
+   where {
+        ?citationAct a cito:CitationAct;
+                    cito:hasCitingEntity <{{artExpression}}>;
+                    cito:hasCitedEntity <{{citedExpression}}>;
+                    cito:hasCitationCharacterization ?color
+   } group by (?color)
+</script>
+
+<!-- query: quante volte un citing entity cita un cited entity per un certo motivo (colore), senza raggruppamento-->
+<script id="query_citationActsInfoNotGrouped" type="text/template">
+   select ?color ?irpTxt ?sentenceTxt
+           where {
+           ?citationAct a cito:CitationAct;
+               cito:hasCitingEntity <{{artExpression}}>;
+               cito:hasCitedEntity <{{citedExpression}}>;
+               cito:hasCitationCharacterization ?color.
+
+           ?citationAct ^oa:hasBody ?ann.
+
+           ?ann a oa:Annotation;
+               oa:hasTarget ?irp.
+
+           ?irp a c4o:InTextReferencePointer;
+               c4o:hasContent ?irpTxt;
+               c4o:hasContext [ a doco:Sentence;
+                                 c4o:hasContent ?sentenceTxt].
+   }
+</script>
+
+<!-- query: info sulle citazioni (citation acts) ad un certo articolo-->
+<script id="query_citationsInfo" type="text/template">
+   select ?citingExp ?color ?citingPubYear ?irpTxt ?sentenceTxt
+   where {
+        ?citAct a cito:CitationAct;
+                cito:hasCitingEntity ?citingExp;
+                cito:hasCitedEntity <{{citedExpression}}>;
+                cito:hasCitationCharacterization ?color.
+
+       ?citAct ^oa:hasBody ?ann.
+
+       ?ann a oa:Annotation;
+                oa:hasTarget ?irp.
+
+       ?irp a c4o:InTextReferencePointer;
+               c4o:hasContent ?irpTxt;
+               c4o:hasContext [ a doco:Sentence;
+                                    c4o:hasContent ?sentenceTxt].
+
+        ?citingExp a fabio:Expression;
+               fabio:hasPublicationYear ?citingPubYear.
+   }
+</script>
+
+
+<!-- query: info generiche sugli articoli citanti-->
+<script id="query_citingArticles" type="text/template">
+   select distinct ?doi ?citingExp ?articleWork ?articleExpression ?title ?authorsList ?abstractTxt ?publicationYear ?htmlItem ?globalCountValue ?globalCountDate   
+   where {
+        ?citingExp a fabio:Expression;
+            dcterms:title ?title;
+            fabio:hasPublicationYear ?publicationYear;
+            cito:cites <{{citedExpression}}>.
+
+        OPTIONAL{
+            ?citingExp frbr:partOf [ a fabio:Book;
+                dcterms:title ?journalTitle;
+                datacite:hasIdentifier [
+                    a datacite:Identifier;
+                        datacite:usesIdentifierScheme datacite:isbn;
+                        litre:hasLiteralValue ?bookIdVal;
+                  ]
+              ].
+        }
+  
+        OPTIONAL{
+            ?citingExp frbr:partOf [ a fabio:JournalIssue, fabio:Expression;
+                datacite:hasIdentifier ?issueIdentifier;
+                fabio:hasSequenceIdentifier ?issueNumber;
+                frbr:partOf [ a fabio:JournalVolume, fabio:Expression;
+                    datacite:hasIdentifier ?volumeIdentifier;
+                    fabio:hasSequenceIdentifier ?volumeNumber;
+                    frbr:partOf [ a fabio:Journal; 
+                        dcterms:title ?journalTitle;        
+                    ]
+                ]
+            ].
+        }
+        
+        OPTIONAL{
+            ?citingExp frbr:embodiment [ a fabio:Manifestation;
+                prism:startingPage ?startingPage;
+                prism:endingPage ?endingPage;].
+        }
+    
+    
+        OPTIONAL{
+            ?citingExp datacite:hasIdentifier [ a datacite:Identifier;
+                datacite:usesIdentifierScheme datacite:occ;
+                litre:hasLiteralValue ?bookChapterIdVal;].
+        }
+    
+        OPTIONAL{
+            ?citingExp datacite:hasIdentifier [ a datacite:Identifier;
+                datacite:usesIdentifierScheme datacite:doi;
+                litre:hasLiteralValue ?doi;].
+        }
+
+        OPTIONAL{
+            ?citingExp datacite:hasIdentifier [
+                a datacite:Identifier;
+                datacite:usesIdentifierScheme datacite:url; 
+                litre:hasLiteralValue ?htmlItem].
+        }
+   }
+</script>
+
+<!-- query: info generiche su un articolo (partendo dal doi) (id: doi) OK -->
+<script id="query_singleArticleByDoi" type="text/template">
+   select distinct ?journalTitle ?volumeNumber ?issueNumber ?title ?expression ?abstractTxt ?publicationYear ?htmlItem ?authorsList ?globalCountSource ?globalCountValue ?globalCountDate
+   where {
+        ?expression a fabio:Expression;
+            dcterms:title ?title;
+            fabio:hasPublicationYear ?publicationYear.
+
+        OPTIONAL{
+            ?expression frbr:partOf [ a fabio:Book;
+                dcterms:title ?journalTitle;
+                datacite:hasIdentifier [
+                    a datacite:Identifier;
+                        datacite:usesIdentifierScheme datacite:isbn;
+                        litre:hasLiteralValue ?bookIdVal;
+                  ]
+              ].
+        }
+  
+        OPTIONAL{
+            ?expression frbr:partOf [ a fabio:JournalIssue, fabio:Expression;
+                datacite:hasIdentifier ?issueIdentifier;
+                fabio:hasSequenceIdentifier ?issueNumber;
+                frbr:partOf [ a fabio:JournalVolume, fabio:Expression;
+                    datacite:hasIdentifier ?volumeIdentifier;
+                    fabio:hasSequenceIdentifier ?volumeNumber;
+                    frbr:partOf [ a fabio:Journal; 
+                        dcterms:title ?journalTitle;        
+                    ]
+                ]
+            ].
+        }
+        
+        OPTIONAL{
+            ?expression frbr:embodiment [ a fabio:Manifestation;
+                prism:startingPage ?startingPage;
+                prism:endingPage ?endingPage;].
+        }
+    
+    
+        OPTIONAL{
+            ?expression datacite:hasIdentifier [ a datacite:Identifier;
+                datacite:usesIdentifierScheme datacite:occ;
+                litre:hasLiteralValue ?bookChapterIdVal;].
+        }
+    
+        
+        ?expression datacite:hasIdentifier [ a datacite:Identifier;
+            datacite:usesIdentifierScheme datacite:doi;
+            litre:hasLiteralValue "{{doi}}"]
+        
+
+        OPTIONAL{
+            ?expression datacite:hasIdentifier [
+                a datacite:Identifier;
+                datacite:usesIdentifierScheme datacite:url; 
+                litre:hasLiteralValue ?htmlItem].
+        }
+   }
+</script>
+
+<!-- query: tutti gli articoli (work) di un autore OK-->
+<script id="query_authorArticles" type="text/template">
+    select  ?work
+    where {
+        ?agent a foaf:Agent;
+            foaf:givenName "{{givenName}}";
+            foaf:familyName "{{familyName}}";
+            pro:holdsRoleInTime ?role.
+
+        ?role a pro:RoleInTime;
+            pro:withRole pro:author;
+            pro:relatesToDocument ?work.
+    }
+</script>
+
+
+<!-- 1992 ... - 2015 -->
+<script id="query_rangeAnni" type="text/template">
+    SELECT DISTINCT ?year {
+      {
+        ?exp a fabio:Expression; 
+            fabio:hasPublicationYear ?year;
+            frbr:partOf [a fabio:Journal]
+      }
+      UNION {
+          ?exp a fabio:Expression; 
+              fabio:hasPublicationYear ?year;
+              frbr:partOf [a fabio:Book]
+      } 
+    }
+    ORDER BY ASC(?year)
+</script>
+
+<script id="query_maxOutgoing" type="text/template">
+    SELECT (MAX(?counter) as ?maxOutgoing) { 
+        SELECT ?author ?year (COUNT(?in_ca) AS ?counter) { 
+            ?author a foaf:Agent;
+            pro:holdsRoleInTime ?role.
+            ?role a pro:RoleInTime;
+                pro:withRole pro:author;
+                pro:relatesToDocument ?expression.
+            ?expression a fabio:Expression.
+            ?expression cito:cites ?in_ca. 
+        } GROUP BY ?author ?year 
+        ORDER BY ?counter 
+    }
+</script>
+
+<script id="query_maxIncoming" type="text/template">
+    SELECT (MAX(?counter) as ?maxIncoming) {
+        SELECT ?author ?year (COUNT(?in_ca) AS ?counter) {
+            ?author a foaf:Agent;
+            pro:holdsRoleInTime ?role.
+            ?role a pro:RoleInTime;
+                pro:withRole pro:author;
+                pro:relatesToDocument ?expression.
+            ?expression a fabio:Expression.
+            ?in_ca cito:cites ?expression.
+            ?in_ca fabio:hasPublicationYear ?year . 
+        } GROUP BY ?author ?year 
+        ORDER BY ?counter 
+    }
+</script>
+
+<script id="query_getCited" type="text/template">
+    SELECT ?year ?color (COUNT(?exp) AS ?counter) { 
+        <{{authorURI}}> a foaf:Agent;
+            pro:holdsRoleInTime ?role.
+            ?role a pro:RoleInTime;
+                pro:withRole pro:author;
+                pro:relatesToDocument ?expression.
+            ?exp a fabio:Expression;
+    cito:cites ?expression.
+    ?exp fabio:hasPublicationYear ?year 
+    } GROUP BY ?year ?color 
+    ORDER BY ?color ?year ASC(?color)
+</script>
+
+<script id="query_getCiting" type="text/template">
+    SELECT ?year ?color (COUNT(?exp) AS ?counter) { 
+        <{{authorURI}}> a foaf:Agent;
+            pro:holdsRoleInTime ?role.
+            ?role a pro:RoleInTime;
+                pro:withRole pro:author;
+                pro:relatesToDocument ?expression.
+            ?expression a fabio:Expression;
+    cito:cites ?exp.
+    ?exp fabio:hasPublicationYear ?year 
+    } GROUP BY ?year ?color 
+    ORDER BY ?color ?year ASC(?color)
+</script>

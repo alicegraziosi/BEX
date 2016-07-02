@@ -3,6 +3,23 @@
  * servizio per gestire salvataggio e recupero delle informazioni realtive agli articoli mostrati in ogni state
  =========================================================*/
 
+
+/*
+in articles-manager.js
+
+var checkState = function(searchType, id, details) {
+    var stateIndex = StatesManagerService.getStateIndex(searchType, id) // indice dello state, -1 se non presente
+
+    if (stateIndex == -1) {
+        StatesManagerService.saveState(searchType, id, details);
+    } else {
+        StatesManagerService.restoreState(stateIndex); //se lo state è già presente, lo recupero ed elimino tutti gli states successivi
+    }
+}
+
+
+*/
+
 'use strict';
 
 myApp
@@ -22,22 +39,15 @@ myApp
             $sessionStorage.lastState = lastState;
         }
 
-		//todo: da eliminare (possibilmente)
-		//$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
-         //   if (toState.name == "app.articles-results" || toState.name == "app.articles-article") {
-         //       lastState.name = toState.name;
-         //       lastState.params = toParams;
-         //   }
-		//})
-
         return {
-	        setState: function(name,params) {
-		        lastState.name = name;
-		        lastState.params = params;
-	        },
+            // StatesManagerService.setState("app.article-doi", $stateParams);
+            setState: function(name,params) {
+                lastState.name = name;
+                lastState.params = params;
+            },
 
             updateCurrentStateParam: function(param,value) {
-	            states[states.length-1].params[param] = value;
+                states[states.length-1].params[param] = value;
             },
 
             /* salva uno nuovo stato */
@@ -55,7 +65,6 @@ myApp
                 for (var i=states.length-1; i>index; i--) {
                     states.pop();
                 }
-
                 return states[index];
             },
 
@@ -72,7 +81,7 @@ myApp
             },
 
             /* per recuperare l'indice di un certo stato; ritorna -1 se non trovato */
-	        //todo: da rivedere i parametri
+            //todo: da rivedere i parametri
             getStateIndex: function(type, id) {
                 var index = -1;
                 for (var key in states) {
@@ -81,14 +90,11 @@ myApp
                         break;
                     }
                 }
-
                 return index;
             },
 
             getLastState: function() {
                 return states[states.length-1];
             }
-
-
         }
     }]);

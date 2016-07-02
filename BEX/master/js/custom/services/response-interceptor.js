@@ -5,10 +5,8 @@
 
 'use strict';
 
-myApp
-    .factory('ResponseInterceptorService', ["$q", function($q) {
-
-
+myApp.factory('ResponseInterceptorService', ["$q", 
+    function($q) {
         return {
             responseError: function(rejection) {
                 if (rejection.status === 0) {
@@ -16,12 +14,9 @@ myApp
                 }
                 return $q.reject(rejection);
             }
-
-
         }
-
-    }])
-    .config(["$httpProvider", function($httpProvider) {
+}])
+.config(["$httpProvider", 
+    function($httpProvider) {
         $httpProvider.interceptors.push('ResponseInterceptorService');
-
-    }])
+}])

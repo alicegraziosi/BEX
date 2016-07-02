@@ -1,0 +1,17 @@
+[
+  {
+    "endpoint": "http://two.eelst.cs.unibo.it:8181/data/query",
+    "queryFile": "queriesSemanticLancet.html",
+    "datasetName": "Semantic Lancet"
+  },
+  {
+    "endpoint": "http://localhost:3030/semanticLancet/query",
+    "queryFile": "queriesSemanticLancet.html",
+    "datasetName": "Semantic Lancet"
+  },
+  {
+    "endpoint": "http://localhost:3030/spacin/query",
+    "queryFile": "queriesSpringer.html",
+    "datasetName": "Springer"
+  }
+]

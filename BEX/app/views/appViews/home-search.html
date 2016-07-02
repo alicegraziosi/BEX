@@ -3,37 +3,38 @@
     <div align="center" id="panelSearch" class="panel panel-default col-centered col-lg-8 col-md-10 col-sm-12">
         <div class="panel-body text-center">
             <h1>Search</h1>
+            <h4>Current dataset: {{datasetName}}</h4>
         </div>
-        <!-- START panel-->
         <div class="panel-body">
             <tabset justified="true">
                 <tab heading="By Abstract" select="HomeSearchCtrl.switchSearch(0)">
-                    <textarea
-                            class="form-control search-text-area"
-                            rows="2"
-                            ng-model="HomeSearchCtrl.searchText"
-                            placeholder="Type some search text and then click on 'Search' or hit Enter"
-                            ui-keypress="{13:'HomeSearchCtrl.keyPressCallBack($event)'}"></textarea>
+                    <input
+                        type="text"
+                        class="form-control input-lg"
+                        ng-model="HomeSearchCtrl.searchText"
+                        placeholder="Type some search text and then click on 'Search' or hit Enter"
+                        ui-keypress="{13:'HomeSearchCtrl.keyPressCallBack($event)'}"/>
                 </tab>
                 <tab heading="By Title" select="HomeSearchCtrl.switchSearch(1)">
                     <input
-                            type="text"
-                            ng-model="HomeSearchCtrl.searchTitle"
-                            placeholder="Type the title and then click on 'Search' or hit Enter"
-                            class="form-control input-lg"
-                            ui-keypress="{13:'HomeSearchCtrl.keyPressCallBack($event)'}" />
+                        type="text"
+                        ng-model="HomeSearchCtrl.searchTitle"
+                        placeholder="Type the title and then click on 'Search' or hit Enter"
+                        class="form-control input-lg"
+                        ui-keypress="{13:'HomeSearchCtrl.keyPressCallBack($event)'}" />
                 </tab>
-                
                 <tab heading="By Author" select="HomeSearchCtrl.switchSearch(2)">
                     <div class="row text-center">
-                        <div class="form-group col-centered col-lg-6 col-md-6 col-sm-10">
+                        <div class="form-group col-centered col-lg-10 col-md-10 col-sm-10">
                             <ui-select
                                     class="input-lg"
                                     ng-model="HomeSearchCtrl.searchAuthor"
                                     theme="bootstrap"
                                     reset-search-input="false"
                                     ng-init="$select.search = ' '"> 
-                                <ui-select-match placeholder="Type author name">{{$select.selected.n + " " +  $select.selected.s}}</ui-select-match>
+                                <ui-select-match placeholder="Type author name">
+                                    {{$select.selected.n + " " +  $select.selected.s}}
+                                </ui-select-match>
                                 <ui-select-choices
                                     repeat="author in HomeSearchCtrl.authors | filter: $select.search" 
                                     refresh="HomeSearchCtrl.refreshAuthors($select.search)"
@@ -43,52 +44,31 @@
                             </ui-select>
                         </div>
                     </div>
-
+                </tab>
+                <tab heading="By Venue" select="HomeSearchCtrl.switchSearch(3)">
+                    <div class="row text-center">
+                        <div class="form-group col-centered col-lg-10 col-md-10 col-sm-10">
+                            <ui-select
+                                    class="input-lg"
+                                    ng-model="HomeSearchCtrl.searchVenue"
+                                    theme="bootstrap"
+                                    reset-search-input="false"
+                                    ng-init="$select.search = ' '"> 
+                                <ui-select-match placeholder="Type venue name">{{$select.selected}}</ui-select-match>
+                                <ui-select-choices
+                                    repeat="venue in HomeSearchCtrl.venues | filter: $select.search track by $index" 
+                                    refresh="HomeSearchCtrl.refreshVenues($select.search)"
+                                    refresh-delay="0">
+                                    <span ng-bind-html="venue | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
                 </tab>
             </tabset>
         </div>
-        <!-- END panel-->
         <div class="text-center">
             <button id="search-btn" type="button" class="mb-sm btn btn-primary btn-lg" ng-click="HomeSearchCtrl.searchForArticles()"><i class="fa fa-search fa-1x"></i> Search</button>
         </div>
-
     </div>
-
-
 </div>
-
-<!--<div class="row">-->
-    <!--<div class="col-md-4">-->
-        <!--&lt;!&ndash; START panel&ndash;&gt;-->
-        <!--<div id="panel_top_authors" class="panel panel-primary">-->
-            <!--<div class="panel-heading">Primary Panel</div>-->
-            <!--<div class="panel-body">-->
-                <!--<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tincidunt est vitae ultrices accumsan. Aliquam ornare lacus adipiscing, posuere lectus et, fringilla augue.</p>-->
-            <!--</div>-->
-            <!--<div class="panel-footer">Panel Footer</div>-->
-        <!--</div>-->
-        <!--&lt;!&ndash; END panel&ndash;&gt;-->
-    <!--</div>-->
-    <!--<div class="col-md-4">-->
-        <!--&lt;!&ndash; START panel&ndash;&gt;-->
-        <!--<div id="panel_top_articles" class="panel panel-primary">-->
-            <!--<div class="panel-heading">Primary Panel</div>-->
-            <!--<div class="panel-body">-->
-                <!--<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tincidunt est vitae ultrices accumsan. Aliquam ornare lacus adipiscing, posuere lectus et, fringilla augue.</p>-->
-            <!--</div>-->
-            <!--<div class="panel-footer">Panel Footer</div>-->
-        <!--</div>-->
-        <!--&lt;!&ndash; END panel&ndash;&gt;-->
-    <!--</div>-->
-    <!--<div class="col-md-4">-->
-        <!--&lt;!&ndash; START panel&ndash;&gt;-->
-        <!--<div id="panel_top_something" class="panel panel-primary">-->
-            <!--<div class="panel-heading">Primary Panel</div>-->
-            <!--<div class="panel-body">-->
-                <!--<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tincidunt est vitae ultrices accumsan. Aliquam ornare lacus adipiscing, posuere lectus et, fringilla augue.</p>-->
-            <!--</div>-->
-            <!--<div class="panel-footer">Panel Footer</div>-->
-        <!--</div>-->
-        <!--&lt;!&ndash; END panel&ndash;&gt;-->
-    <!--</div>-->
-<!--</div>-->

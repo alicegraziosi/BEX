@@ -52,7 +52,7 @@ myApp.directive('citingItem', ["ngDialog", "ArticleManagerService","$rootScope",
                     'app.article-doi',
                     {
 	                    doi: scope.itemData.doi.value,
-	                    title: scope.itemData.title.value
+	                    title: scope.itemData.title
                     },
                     {
                         inherit: $rootScope.inheritUrlParams, //eureka!! bastava mettere questo a false per evitare di trascinarsi i parametri nell'url!!
@@ -84,12 +84,11 @@ myApp.directive('citingItem', ["ngDialog", "ArticleManagerService","$rootScope",
                         return true;
                     }
                 }
-
                 return false;
             }
 
 	        scope.openAbstractDialog = function() {
-		        ngDialog.open({
+                ngDialog.open({
 			        template: "/app/templates/dialog-abstract.html",
 			        className: "ngdialog-theme-default-custom",
 			        data: {
@@ -113,12 +112,10 @@ myApp.directive('citingItem', ["ngDialog", "ArticleManagerService","$rootScope",
 
             var ModalMotivationsCtrl = ["$scope", function ($scope) {
                 $scope.$storage = {}; //todo: da rivedere: definisco storage per aggirare un possibile bug della direttiva panel-tools, vedere anche generateId()
-
                 $scope.empInTxtRefPointer = function(sentenceTxt, irpTxt) {
                     var empSentence = sentenceTxt.replace(irpTxt, "<span class='irp'><b>"+irpTxt+"</b></span>")
                     return empSentence;
                 };
-
                 $scope.generateId = function($index){
                     var elemId = "motivation_"+$index+Math.floor((Math.random() * 100000) + 1);
                     var data = angular.fromJson($scope.$storage["panelState"]);
@@ -135,6 +132,5 @@ myApp.directive('citingItem', ["ngDialog", "ArticleManagerService","$rootScope",
             $scope.citingId = "citing_"+Date.now();
         }]
     };
-
 }]);
 

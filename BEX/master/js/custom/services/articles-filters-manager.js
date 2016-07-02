@@ -18,8 +18,20 @@ myApp.factory('ArticlesFiltersManager',["ORDER_BY","SORT","ARTICLE_TYPES","FILTE
 
 
 	/* vars filters */
-	var articleTypes = [ARTICLE_TYPES.JournalArticle,ARTICLE_TYPES.JournalReviewArticle, ARTICLE_TYPES.JournalEditorial, ARTICLE_TYPES.ConferencePaper, ARTICLE_TYPES.Letter, ARTICLE_TYPES.Article];
-	var selectedArticleTypes = [ARTICLE_TYPES.Article,ARTICLE_TYPES.JournalArticle,ARTICLE_TYPES.JournalReviewArticle, ARTICLE_TYPES.JournalEditorial, ARTICLE_TYPES.Letter, ARTICLE_TYPES.ConferencePaper];
+	var articleTypes = [ARTICLE_TYPES.JournalArticle, ARTICLE_TYPES.JournalReviewArticle, 
+						ARTICLE_TYPES.JournalEditorial, ARTICLE_TYPES.ConferencePaper, 
+						ARTICLE_TYPES.Letter, ARTICLE_TYPES.Article,
+						ARTICLE_TYPES.ProceedingsPaper, ARTICLE_TYPES.BookChapter,
+						ARTICLE_TYPES.AcademicProceedings, ARTICLE_TYPES.BibliographicReference,
+						ARTICLE_TYPES.ReportDocument, ARTICLE_TYPES.ExpressionCollection,
+						ARTICLE_TYPES.Book];
+	var selectedArticleTypes = [ARTICLE_TYPES.Article, ARTICLE_TYPES.JournalArticle, 
+						ARTICLE_TYPES.JournalReviewArticle, ARTICLE_TYPES.JournalEditorial,
+						ARTICLE_TYPES.Letter, ARTICLE_TYPES.ConferencePaper,
+						ARTICLE_TYPES.ProceedingsPaper, ARTICLE_TYPES.BookChapter,
+						ARTICLE_TYPES.AcademicProceedings, ARTICLE_TYPES.BibliographicReference,
+						ARTICLE_TYPES.ReportDocument, ARTICLE_TYPES.ExpressionCollection,
+						ARTICLE_TYPES.Book];
 
 	var startingPublicationYear =  { value: defaultYear};
 

@@ -1,7 +1,7 @@
 /*
 
     Service per paginazione dei risultati
-    (usato in author-results.js e articles-results.js)
+    (usato in articles-results.js)
 
 */
 
@@ -16,6 +16,7 @@ myApp.factory('PagerService', function PagerService(){
  
     // service implementations
     function GetPager(totalItems, currentPage, pageSize) {
+
         // default to first page
         currentPage = currentPage || 1;
  

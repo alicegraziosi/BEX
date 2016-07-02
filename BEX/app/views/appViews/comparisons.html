@@ -6,51 +6,55 @@
         </div>
         <!-- START panel-->
         <div class="panel-body">
-            <tabset justified="true">
-                <tab>
-                    <div class="row text-center">
-                        <div class="form-group col-centered col-lg-6 col-md-6 col-sm-10">
-                            <ui-select
-                                    class="input-lg"
-                                    ng-model="ComparisonsCtrl.authorUno"
-                                    theme="bootstrap"
-                                    reset-search-input="false"
-                                    ng-init="$select.search = ' '"> 
-                                <ui-select-match placeholder="Type author name">{{$select.selected.n + " " +  $select.selected.s}}</ui-select-match>
-                                <ui-select-choices
-                                    repeat="author in ComparisonsCtrl.authors | filter: $select.search" 
-                                    refresh="ComparisonsCtrl.refreshAuthors($select.search)"
-                                    refresh-delay="0">
-                                    <span ng-bind-html="author.fullName | highlight: $select.search"></span>
-                                </ui-select-choices>
-                            </ui-select>
-                        </div>
+            <div class="row text-center">
+                <div class="form-group col-centered col-lg-6 col-md-6 col-sm-10">
+                    <ui-select
+                            class="input-lg"
+                            ng-model="ComparisonsCtrl.authorUno"
+                            theme="bootstrap"
+                            reset-search-input="false"
+                            ng-init="$select.search = ' '"> 
+                        <ui-select-match placeholder="Type author name">{{$select.selected.n + " " +  $select.selected.s}}</ui-select-match>
+                        <ui-select-choices
+                            repeat="author in ComparisonsCtrl.authors | filter: $select.search" 
+                            refresh="ComparisonsCtrl.refreshAuthors($select.search)"
+                            refresh-delay="0">
+                            <span ng-bind-html="author.fullName | highlight: $select.search"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                    <ui-select
+                            class="input-lg"
+                            ng-model="ComparisonsCtrl.authorDue"
+                            theme="bootstrap"
+                            reset-search-input="false"
+                            ng-init="$select.search = ' '"> 
+                        <ui-select-match placeholder="Type author name">{{$select.selected.n + " " +  $select.selected.s}}</ui-select-match>
+                        <ui-select-choices
+                            repeat="author in ComparisonsCtrl.authors | filter: $select.search" 
+                            refresh="ComparisonsCtrl.refreshAuthors($select.search)"
+                            refresh-delay="0">
+                            <span ng-bind-html="author.fullName | highlight: $select.search"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>
+            <div class="row text-center" ng-show="ComparisonsCtrl.authorUno && ComparisonsCtrl.authorDue">
+                <div class="p row-centered">
+                    <div class="btn-group col col-centered">
+                        <label class="btn btn-primary ng-pristine ng-untouched ng-valid active"
+                            ng-model="ComparisonsCtrl.comparisonType"
+                            btn-radio="'incoming'" ng-change=""><em class="fa fa-sign-in fa-lg"></em> Incoming</label>
+                        <label class="btn btn-primary ng-pristine ng-untouched ng-valid" 
+                            ng-model="ComparisonsCtrl.comparisonType"
+                            btn-radio="'outgoing'" ng-change=""><em class="fa fa-sign-out fa-lg"></em> Outgoing</label>
                     </div>
-                    <div class="row text-center">
-                        <div class="form-group col-centered col-lg-6 col-md-6 col-sm-10">
-                            <ui-select
-                                    class="input-lg"
-                                    ng-model="ComparisonsCtrl.authorDue"
-                                    theme="bootstrap"
-                                    reset-search-input="false"
-                                    ng-init="$select.search = ' '"> 
-                                <ui-select-match placeholder="Type author name">{{$select.selected.n + " " +  $select.selected.s}}</ui-select-match>
-                                <ui-select-choices
-                                    repeat="author in ComparisonsCtrl.authors | filter: $select.search" 
-                                    refresh="ComparisonsCtrl.refreshAuthors($select.search)"
-                                    refresh-delay="0">
-                                    <span ng-bind-html="author.fullName | highlight: $select.search"></span>
-                                </ui-select-choices>
-                            </ui-select>
-                        </div>
-                    </div>
-                </tab>
-            </tabset>
+                </div>
+            </div>
         </div>
-
-        <!-- grafici -->
-        <!-- gdhVisualization directive-->
-        <dh-visualization
-        	author-uno=ComparisonsCtrl.authorUno 
-        	author-due=ComparisonsCtrl.authorDue>
-        </dh-visualization>
+    </div>
+</div>
+<dh-visualization ng-show="ComparisonsCtrl.authorUno && ComparisonsCtrl.authorDue"
+    author-uno=ComparisonsCtrl.authorUno 
+    author-due=ComparisonsCtrl.authorDue
+    comparison-type=ComparisonsCtrl.comparisonType>
+</dh-visualization>

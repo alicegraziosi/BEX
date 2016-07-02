@@ -26,16 +26,9 @@
     "bottom": false
   },
   {
-    "text": "Authors",
-    "sref": "app.authors",
-    "icon": "icon-user",
-    "alert": "AuthorsLength",
-    "bottom": false
-  },
-  {
     "text": "Comparisons",
     "sref": "app.comparisons",
-    "icon": "icon-user",
+    "icon": "fa fa-bar-chart",
     "bottom": false
   },
   {

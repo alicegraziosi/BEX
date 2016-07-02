@@ -4,45 +4,60 @@
  =========================================================*/
 'use strict';
 
-myApp.factory('EndpointsManager', ['$localStorage',function($localStorage){
+myApp.factory('EndpointsManager', ['$localStorage', '$http', function($localStorage, $http){
 
- var endpoints;
- var selectedEndpoint;
+    // NEW
+    var endpoints = [];
 
- if($localStorage.endpoints) {
-  endpoints = $localStorage.endpoints;
- } else {
-  $localStorage.endpoints = endpoints = [
-   "http://two.eelst.cs.unibo.it:8181/data/query" //in prima posizione c'è l'endpoint default
-  ];
- }
+    var selectedEndpoint;
 
- if($localStorage.selectedEndpoint) {
-  selectedEndpoint = $localStorage.selectedEndpoint;
- } else {
-  $localStorage.selectedEndpoint = selectedEndpoint = {"value":endpoints[0]} //imposto l'endpoint default
- }
+    if($localStorage.endpoints) {
+        endpoints = $localStorage.endpoints;
+    } else {
+        /*
+        "endpoint": "http://two.eelst.cs.unibo.it:8181/data/query",
+        "queryFile": "queriesSemanticLancet.html",
+        "datasetName": "Semantic Lancet"
+        */
+        var endpointQueryFile = 'server/endpointQueryFile.json';
+        $http.get(endpointQueryFile)
+            .success(function(items) {
+                angular.forEach(items, function(value, key) {
+                    endpoints.push(value.endpoint);
+                    $localStorage.endpoints = endpoints;
+                });
+            })
+            .error(function(data, status, headers, config) {
+                ngDialog.open({template: "app/templates/dialog-error.html"});
+            });
+    }
 
- return {
-  getEndpoints: function(){
-   return endpoints;
-  },
+    if($localStorage.selectedEndpoint) {
+        selectedEndpoint = $localStorage.selectedEndpoint;
+    } else {
+        // imposto l'endpoint default
+        $localStorage.selectedEndpoint = selectedEndpoint = {"value": "http://two.eelst.cs.unibo.it:8181/data/query"}  
+    }
 
-  removeEndpoint: function(index){
-   endpoints.splice(index, 1);
-  },
+    return {
+        getEndpoints: function(){
+            return endpoints;
+        },
 
-  addEndpoint: function(newEndpoint){
-   endpoints.push(newEndpoint);
-  },
+        removeEndpoint: function(index){
+            endpoints.splice(index, 1);
+        },
 
-  setSelectedEndpoint: function(index){
-   selectedEndpoint.value = endpoints[index];
-  },
+        addEndpoint: function(newEndpoint){
+            endpoints.push(newEndpoint);
+        },
 
-  getSelectedEndpoint: function() {
-   return selectedEndpoint.value; // richiamato in ping.js
-  }
+        setSelectedEndpoint: function(index){
+            selectedEndpoint.value = endpoints[index];
+        },
 
- }
+        getSelectedEndpoint: function() {  // richiamato in ping.js 
+            return selectedEndpoint.value; 
+        }
+    }
 }]);
